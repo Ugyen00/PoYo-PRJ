@@ -1,8 +1,10 @@
 import * as poseDetection from '@tensorflow-models/pose-detection';
 import * as tf from '@tensorflow/tfjs';
 import React, { useRef, useState, useEffect } from 'react'
+
 // import backend from '@tensorflow/tfjs-backend-webgl'
-import Webcam from 'react-webcam'
+import Webcam from 'react-webcam';
+
 import { count } from '../../utils/music';
 
 import Instructions from '../../components/Instrctions/Instructions';
@@ -22,14 +24,12 @@ let poseList = [
 ]
 
 let interval
-
-// flag variable is used to help capture the time when AI just detect 
-// the pose as correct(probability more than threshold)
 let flag = false
 
 function Yoga() {
-    const webcamRef = useRef(null)
-    const canvasRef = useRef(null)
+    const webcamRef = useRef(null);
+    const canvasRef = useRef(null);
+
 
     const [startingTime, setStartingTime] = useState(0)
     const [currentTime, setCurrentTime] = useState(0)
