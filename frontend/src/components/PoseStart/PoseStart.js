@@ -1,11 +1,9 @@
 import React from 'react'
 
-const About = () => {
+export default function PoseStart() {
     return (
         <div>
-            About Page
+
         </div>
     )
 }
-
-export default About
