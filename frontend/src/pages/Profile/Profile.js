@@ -1,12 +1,11 @@
 import React from 'react'
 
-const Tutorials = () => {
+const Profile = () => {
     return (
         <div>
-            TutorialsPage
-
+            Profile Page
         </div>
     )
 }
 
-export default Tutorials
+export default Profile
