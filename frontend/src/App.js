@@ -9,6 +9,8 @@ import Yogaclass from './pages/YogaClass/Yogaclass'
 import Profile from './pages/Profile/Profile'
 
 import './App.css'
+import Signup from './pages/Forms/Signup'
+import Login from './pages/Forms/Login'
 
 export default function App() {
   return (
@@ -19,6 +21,8 @@ export default function App() {
         <Route path='/yoga' element={<Yoga />} />
         <Route path='/about' element={<About />} />
         <Route path='/yogaclass' element={<Yogaclass />} />
+        <Route path='/signup' element={<Signup />} />
+        <Route path='/login' element={<Login />} />
       </Routes>
     </Router>
   )

@@ -23,7 +23,7 @@ export default function Landing() {
 
             <div className="w-full h-full absolute z-0" />
             <div
-                className="flex flex-col gap-8 absolute px-8 xl:px-16 md:py-16 xl:py-6 top-[25%] left-[15%]"
+                className="flex flex-col gap-8 absolute px-8 xl:px-6 md:py-16 xl:py-6 top-[20%] left-[15%]"
             >
                 <div>
                     <p
@@ -33,15 +33,15 @@ export default function Landing() {
                         Intelligent Grooves:<br />
 
                     </p>
-                    <p className="text-4xl inline font-semibold">Yoga Re-imagined by AI</p>
+                    <p className="text-3xl inline font-semibold">Yoga Re-imagined by AI</p>
                 </div>
             </div>
 
-            <div
-                className="absolute bottom-[0%] left-[5%] lg:left-[15%] xl:left-[20%] lg:flex lg:flex-row"
-            >
+            <div className="absolute bottom-0 w-full flex justify-center items-center lg:justify-center lg:items-center">
                 <img src='/images/title.svg'
-                    className='flex justify-center item-center' />
+                    width={800}
+                    height={200}
+                    className='' />
             </div>
         </main>
     );
