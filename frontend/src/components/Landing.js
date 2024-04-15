@@ -1,38 +1,5 @@
 import React from 'react'
 
-// export default function Landing() {
-//     return (
-//         <>
-//             <div className="relative flex h-screen">
-//                 <img
-//                     src={'/images/hero.svg'}
-//                     alt="hero_banner"
-//                     width={2000}
-//                     height={800}
-//                     className="absolute w-full h-full object-cover"
-//                     style={{
-//                         left: '0',
-//                         right: '0',
-//                         margin: 'auto',
-//                     }}
-//                 />
-
-//                 <div className="w-full h-full absolute text-white z-0">
-//                     Mindful Moves,
-//                     Intelligent Grooves:
-//                     Yoga Re-imagined by AI
-//                 </div>
-//             </div>
-
-//         </>
-
-
-//     )
-// }
-
-
-
-
 export default function Landing() {
     return (
         <main

@@ -14,7 +14,7 @@ export default function NavBar() {
                     <Link to='/yogaclass'>
                         <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Yoga Class</button>
                     </Link>
-                    <Link to='/start'>
+                    <Link to='/yoga'>
                         <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Live Session</button>
                     </Link>
                     <Link to='/about'>
