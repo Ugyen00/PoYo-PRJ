@@ -8,6 +8,7 @@ import DropDown from '../../components/DropDown/DropDown';
 import { poseImages } from '../../utils/pose_images';
 import { POINTS, keypointConnections } from '../../utils/data';
 import { drawPoint, drawSegment } from '../../utils/helper';
+import Navbar from '../../components/NavBar';
 
 let skeletonColor = 'rgb(255,255,255)';
 let poseList = [
@@ -236,19 +237,22 @@ function Yoga() {
     }
 
     return (
-        <div className="">
-            <DropDown
-                poseList={poseList}
-                currentPose={currentPose}
-                setCurrentPose={setCurrentPose}
-            />
-            <Instructions
-                currentPose={currentPose}
-            />
-            <button
-                onClick={startYoga}
-                className="bg-[#3A5A40] hover:bg-[#242F2A] text-white font-bold py-2 px-4 rounded absolute bottom-10 left-1/2 transform -translate-x-1/2"
-            >Start Pose</button>
+        <div>
+            <Navbar />
+            <div className='py-10'>
+                <DropDown
+                    poseList={poseList}
+                    currentPose={currentPose}
+                    setCurrentPose={setCurrentPose}
+                />
+                <Instructions
+                    currentPose={currentPose}
+                />
+                <button
+                    onClick={startYoga}
+                    className="bg-[#3A5A40] hover:bg-[#242F2A] text-white font-bold py-2 px-4 rounded absolute bottom-10 left-1/2 transform -translate-x-1/2"
+                >Start Pose</button>
+            </div>
         </div>
     );
 }
