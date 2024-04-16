@@ -6,7 +6,7 @@ export default function Yogoclass() {
     return (
         <div>
             <NavBar />
-            <div className="flex flex-col items-center justify-center min-h-screen py-16">
+            <div className="flex flex-col items-center justify-center min-h-screen py-18">
                 <h1 className="text-4xl md:text-6xl text-black font-semibold mb-8">Basic Tutorials</h1>
                 <div className="w-3/4 md:w-1/2">
                     {tutorials.map((tutorial, index) => (

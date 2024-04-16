@@ -5,11 +5,13 @@ export default function NavBar() {
     return (
         <div>
             <div className='flex items-center justify-between bg-white w-full h-18 fixed top-0 z-50 px-56 shadow-lg py-2'>
-                <img
-                    src='/images/logo.png'
-                    alt='Logo'
-                    className='h-10 p-0 m-0 '
-                />
+                <a href="/">
+                    <img
+                        src='/images/logo.png'
+                        alt='Logo'
+                        className='h-10 p-0 m-0'
+                    />
+                </a>
                 <div className="flex space-x-4">
                     <Link to='/yogaclass'>
                         <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Yoga Class</button>
