@@ -1,28 +1,23 @@
 import React, { useState } from 'react'
-
 import { poseInstructions } from '../../utils/data'
-
 import { poseImages } from '../../utils/pose_images'
 
-import './Instructions.css'
-
 export default function Instructions({ currentPose }) {
-
-    const [instructions, setInsntructions] = useState(poseInstructions)
+    const [instructions, setInstructions] = useState(poseInstructions)
 
     return (
-        <div className="instructions-container">
-            <ul className="instructions-list">
-                {instructions[currentPose].map((instruction) => {
-                    return (
-                        <li className="instruction">{instruction}</li>
-                    )
-
-                })}
+        <div className="flex justify-center items-center">
+            <ul className="w-2/5 border-2 border-white border-opacity-20 rounded-lg p-2 mt-5">
+                {instructions[currentPose].map((instruction, index) => (
+                    <li key={index} className="text-black my-5">
+                        {instruction}
+                    </li>
+                ))}
             </ul>
             <img
-                className="pose-demo-img"
+                className="h-96 aspect-w-1 aspect-h-1 rounded-lg"
                 src={poseImages[currentPose]}
+                alt="Pose Demo"
             />
         </div>
     )

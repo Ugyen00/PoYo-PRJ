@@ -1,60 +1,49 @@
 import * as poseDetection from '@tensorflow-models/pose-detection';
 import * as tf from '@tensorflow/tfjs';
-import React, { useRef, useState, useEffect } from 'react'
-
-// import backend from '@tensorflow/tfjs-backend-webgl'
+import React, { useRef, useState, useEffect } from 'react';
 import Webcam from 'react-webcam';
-
 import { count } from '../../utils/music';
-
 import Instructions from '../../components/Instrctions/Instructions';
-
-import './Yoga.css'
-
 import DropDown from '../../components/DropDown/DropDown';
 import { poseImages } from '../../utils/pose_images';
 import { POINTS, keypointConnections } from '../../utils/data';
-import { drawPoint, drawSegment } from '../../utils/helper'
+import { drawPoint, drawSegment } from '../../utils/helper';
 
-
-let skeletonColor = 'rgb(255,255,255)'
+let skeletonColor = 'rgb(255,255,255)';
 let poseList = [
     'Tree', 'Chair', 'Cobra', 'Warrior', 'Dog',
     'Shoulderstand', 'Traingle'
-]
+];
 
-let interval
-let flag = false
+let interval;
+let flag = false;
 
 function Yoga() {
     const webcamRef = useRef(null);
     const canvasRef = useRef(null);
 
-
-    const [startingTime, setStartingTime] = useState(0)
-    const [currentTime, setCurrentTime] = useState(0)
-    const [poseTime, setPoseTime] = useState(0)
-    const [bestPerform, setBestPerform] = useState(0)
-    const [currentPose, setCurrentPose] = useState('Tree')
-    const [isStartPose, setIsStartPose] = useState(false)
-
+    const [startingTime, setStartingTime] = useState(0);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [poseTime, setPoseTime] = useState(0);
+    const [bestPerform, setBestPerform] = useState(0);
+    const [currentPose, setCurrentPose] = useState('Tree');
+    const [isStartPose, setIsStartPose] = useState(false);
 
     useEffect(() => {
-        const timeDiff = (currentTime - startingTime) / 1000
+        const timeDiff = (currentTime - startingTime) / 1000;
         if (flag) {
-            setPoseTime(timeDiff)
+            setPoseTime(timeDiff);
         }
         if ((currentTime - startingTime) / 1000 > bestPerform) {
-            setBestPerform(timeDiff)
+            setBestPerform(timeDiff);
         }
-    }, [currentTime])
-
+    }, [currentTime]);
 
     useEffect(() => {
-        setCurrentTime(0)
-        setPoseTime(0)
-        setBestPerform(0)
-    }, [currentPose])
+        setCurrentTime(0);
+        setPoseTime(0);
+        setBestPerform(0);
+    }, [currentPose]);
 
     const CLASS_NO = {
         Chair: 0,
@@ -65,7 +54,7 @@ function Yoga() {
         Traingle: 5,
         Tree: 6,
         Warrior: 7,
-    }
+    };
 
     function get_center_point(landmarks, left_bodypart, right_bodypart) {
         let left = tf.gather(landmarks, left_bodypart, 1)
@@ -196,75 +185,58 @@ function Yoga() {
     }
 
     function startYoga() {
-        setIsStartPose(true)
-        runMovenet()
+        setIsStartPose(true);
+        runMovenet();
     }
 
     function stopPose() {
-        setIsStartPose(false)
-        clearInterval(interval)
+        setIsStartPose(false);
+        clearInterval(interval);
     }
-
-
 
     if (isStartPose) {
         return (
-            <div className="yoga-container">
-                <div className="performance-container">
-                    <div className="pose-performance">
+            <div className="min-w-full min-h-screen">
+                <div className="">
+                    <div className="">
                         <h4>Pose Time: {poseTime} s</h4>
                     </div>
-                    <div className="pose-performance">
+                    <div className="">
                         <h4>Best: {bestPerform} s</h4>
                     </div>
                 </div>
                 <div>
-
                     <Webcam
                         width='640px'
                         height='480px'
                         id="webcam"
                         ref={webcamRef}
-                        style={{
-                            position: 'absolute',
-                            left: 120,
-                            top: 100,
-                            padding: '0px',
-                        }}
+                        className="absolute left-12 top-24"
                     />
                     <canvas
                         ref={canvasRef}
                         id="my-canvas"
                         width='640px'
                         height='480px'
-                        style={{
-                            position: 'absolute',
-                            left: 120,
-                            top: 100,
-                            zIndex: 1
-                        }}
-                    >
-                    </canvas>
+                        className="absolute left-12 top-24 z-10"
+                    />
                     <div>
                         <img
                             src={poseImages[currentPose]}
-                            className="pose-img"
+                            className="absolute right-12 top-20 w-80 aspect-w-1 aspect-h-1"
                         />
                     </div>
-
                 </div>
                 <button
                     onClick={stopPose}
-                    className="secondary-btn"
+                    className="absolute left-1/2 transform -translate-x-1/2 bottom-8"
                 >Stop Pose</button>
             </div>
-        )
+        );
     }
 
     return (
-        <div
-            className="yoga-container"
-        >
+        <div className="">
             <DropDown
                 poseList={poseList}
                 currentPose={currentPose}
@@ -275,10 +247,10 @@ function Yoga() {
             />
             <button
                 onClick={startYoga}
-                className="secondary-btn"
+                className="bg-[#3A5A40] hover:bg-[#242F2A] text-white font-bold py-2 px-4 rounded absolute bottom-10 left-1/2 transform -translate-x-1/2"
             >Start Pose</button>
         </div>
-    )
+    );
 }
 
-export default Yoga
+export default Yoga;
