@@ -102,7 +102,7 @@ export default function About() {
                                     />
                                 </CardBody>
                                 <CardFooter>
-                                    <Button>AI Developer</Button>
+                                    <Button>Data Engineer</Button>
                                 </CardFooter>
                             </Card>
                         </SimpleGrid>
