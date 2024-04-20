@@ -162,3 +162,5 @@ print("ACCURACY: ", accuracy)
 
 tfjs.converters.save_keras_model(model, tfjs_model_dir)
 print('tfjs model saved at ',tfjs_model_dir)
+
+model.save('model.keras')
