@@ -1,5 +1,6 @@
 import React from 'react'
 import Slider2 from './Slider2'
+import { Link } from 'react-router-dom';
 
 const Yogapose = () => {
     return (
@@ -22,17 +23,13 @@ const Yogapose = () => {
             </div>
 
             {/* See More Button */}
-            <button
-                className="bg-[#3A5A40] hover:bg-[#242F2A] text-white font-bold py-2 px-4 rounded absolute bottom-10 left-1/2 transform -translate-x-1/2"
-                onClick={() => console.log("See More clicked")}
-            >
-                See More
-            </button>
+            <Link to="/yogaclass" className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+                <button className="bg-[#3A5A40] hover:bg-[#242F2A] text-white font-bold py-2 px-4 rounded">
+                    See More
+                </button>
+            </Link>
         </div>
     );
 };
 
 export default Yogapose;
-
-
-

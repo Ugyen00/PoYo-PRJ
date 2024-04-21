@@ -180,8 +180,6 @@ function Yoga() {
             } catch (err) {
                 console.log(err)
             }
-
-
         }
     }
 
@@ -197,41 +195,49 @@ function Yoga() {
 
     if (isStartPose) {
         return (
-            <div className="min-w-full min-h-screen">
-                <div className="">
-                    <div className="">
-                        <h4>Pose Time: {poseTime} s</h4>
-                    </div>
-                    <div className="">
-                        <h4>Best: {bestPerform} s</h4>
+            <div>
+                <Navbar />
+                <div className='py-12'>
+                    <div class="flex justify-center items-center">
+                        <img src="/images/live.svg" width="300" height="100" class="flex justify-center items-center py-4" />
                     </div>
                 </div>
-                <div>
-                    <Webcam
-                        width='640px'
-                        height='480px'
-                        id="webcam"
-                        ref={webcamRef}
-                        className="absolute left-12 top-24"
-                    />
-                    <canvas
-                        ref={canvasRef}
-                        id="my-canvas"
-                        width='640px'
-                        height='480px'
-                        className="absolute left-12 top-24 z-10"
-                    />
-                    <div>
-                        <img
-                            src={poseImages[currentPose]}
-                            className="absolute right-12 top-20 w-80 aspect-w-1 aspect-h-1"
+                <div className="min-w-full min-h-screen">
+                    <div className="flex flex-row-reverse">
+                        <Webcam
+                            width='540px'
+                            height='380px'
+                            id="webcam"
+                            ref={webcamRef}
+                            className="absolute right-12 top-42 border-2 border-green-500"
                         />
+                        <canvas
+                            ref={canvasRef}
+                            id="my-canvas"
+                            width='540px'
+                            height='380px'
+                            className="absolute right-12 top-42 z-10"
+                        />
+                        <div>
+                            <img
+                                src={poseImages[currentPose]}
+                                className="absolute left-32 top-56 w-80 aspect-w-1 aspect-h-1"
+                            />
+                            <div className="flex justify-center item-center absolute left-40 py-96">
+                                <div>
+                                    <h1>Pose Time: {poseTime} s</h1>
+                                </div>
+                                <div className="ml-8">
+                                    <h1>Your Best: {bestPerform} s</h1>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <button
+                        onClick={stopPose}
+                        className="bg-[red] hover:bg-[#966A61] text-white font-bold py-2 px-4 rounded absolute bottom-10 left-1/2 transform -translate-x-1/2"
+                    >Stop Pose</button>
                 </div>
-                <button
-                    onClick={stopPose}
-                    className="absolute left-1/2 transform -translate-x-1/2 bottom-8"
-                >Stop Pose</button>
             </div>
         );
     }

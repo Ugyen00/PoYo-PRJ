@@ -18,7 +18,6 @@ export default function NavBar() {
                         className="h-10"
                     />
                 </a>
-
                 {/* Hamburger menu button */}
                 <button className="block sm:hidden" onClick={toggleNav}>
                     <div className="w-6 h-6">
@@ -70,7 +69,6 @@ export default function NavBar() {
                         </Link>
                     </div>
                 </div>
-
                 {/* Navigation links for larger screens */}
                 <div className="hidden sm:flex space-x-4">
                     <Link to='/yogaclass'>
