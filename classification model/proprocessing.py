@@ -161,5 +161,5 @@ csvs_out_path = 'test_data.csv'
 test_preprocessor = Preprocessor(
     images_in_folder,
     csvs_out_path
-)
+)          
 test_preprocessor.process()
