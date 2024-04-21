@@ -75,7 +75,7 @@ class Preprocessor(object):
                         
                         # skip images that is not RGB
                         if image.shape[2] != 3:
-                            self.message.append('Skipped' + image_path + ' Image is not in RGB')
+                            self._message.append('Skipped' + image_path + ' Image is not in RGB')
                             continue
                         
                         person = detect(image)
@@ -96,7 +96,8 @@ class Preprocessor(object):
                                   dtype=np.float32)
                         
                         # writing the landmark coordinates to its csv files
-                        coord = pose_landmarks.flatten().astype(np.str).tolist()
+                        # coord = pose_landmarks.flatten().astype(np.str).tolist()
+                        coord = pose_landmarks.flatten().astype(str).tolist()
                         csv_out_writer.writerow([image_name] + coord)
                         
             print(self._message)
@@ -145,7 +146,6 @@ class Preprocessor(object):
             return total_df
 
 
-
 # preprocess training data
 images_in_folder = os.path.join('yoga_poses', 'train')
 csvs_out_path = 'train_data.csv'
@@ -161,8 +161,5 @@ csvs_out_path = 'test_data.csv'
 test_preprocessor = Preprocessor(
     images_in_folder,
     csvs_out_path
-)
+)          
 test_preprocessor.process()
-            
-            
-                        
