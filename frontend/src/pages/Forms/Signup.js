@@ -15,6 +15,7 @@ const SignUp = () => {
   
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
     setFormData(prevState => ({
       ...prevState,
       [name]: value
@@ -23,6 +24,43 @@ const SignUp = () => {
   
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (formData.fullName.trim() === '') {
+      alert('Please enter your full name'); 
+      return;
+    }
+  
+    if (formData.email.trim() === '') {
+      alert('Please enter your email address');
+      return;
+    }
+
+    if (formData.phone.trim() === '') {
+      alert('Please enter your phone number');
+      return;
+    }
+  
+    if (formData.dob.trim() === '') {
+      alert('Please enter your date of birth');
+      return;
+    }
+
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
+    if (!passwordRegex.test(formData.password)) {
+      alert('Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)');
+      return;
+    }
+  
+    if (formData.confirmPassword.trim() === '') {
+      alert('Please confirm your password');
+      return;
+    }
+  
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
     console.log(formData);
   };
 
