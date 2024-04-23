@@ -8,7 +8,6 @@ const SignUp = () => {
     fullName: '',
     email: '',
     phone: '',
-    dob: '',
     password: '',
     confirmPassword: ''
   });
