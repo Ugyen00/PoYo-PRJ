@@ -19,6 +19,16 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (formData.email.trim() === '') {
+      alert('Please enter your email address');
+      return;
+    }
+  
+    if (formData.password.trim() === '') {
+      alert('Please enter your password');
+      return;
+    }
+    
     console.log(formData);
   };
 

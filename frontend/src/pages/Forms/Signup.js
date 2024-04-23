@@ -8,13 +8,13 @@ const SignUp = () => {
     fullName: '',
     email: '',
     phone: '',
-    dob: '',
     password: '',
     confirmPassword: ''
   });
   
   const handleChange = (e) => {
     const { name, value } = e.target;
+     
     setFormData(prevState => ({
       ...prevState,
       [name]: value
@@ -23,6 +23,38 @@ const SignUp = () => {
   
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (formData.fullName.trim() === '') {
+      alert('Please enter your full name'); 
+      return;
+    }
+  
+    if (formData.email.trim() === '') {
+      alert('Please enter your email address');
+      return;
+    }
+
+    if (formData.phone.trim() === '') {
+      alert('Please enter your phone number');
+      return;
+    }
+
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
+    if (!passwordRegex.test(formData.password)) {
+      alert('Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)');
+      return;
+    }
+  
+    if (formData.confirmPassword.trim() === '') {
+      alert('Please confirm your password');
+      return;
+    }
+  
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
     console.log(formData);
   };
 
@@ -72,18 +104,6 @@ const SignUp = () => {
               id="phone"
               name="phone"
               value={formData.phone}
-              onChange={handleChange}
-              className="w-2/4 border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="dob" className="block mb-1">Date of Birth</label>
-            <input
-              type="date"
-              id="dob"
-              name="dob"
-              value={formData.dob}
               onChange={handleChange}
               className="w-2/4 border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
               required
