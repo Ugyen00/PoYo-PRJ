@@ -15,7 +15,7 @@ const SignUp = () => {
   
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+     
     setFormData(prevState => ({
       ...prevState,
       [name]: value
@@ -37,11 +37,6 @@ const SignUp = () => {
 
     if (formData.phone.trim() === '') {
       alert('Please enter your phone number');
-      return;
-    }
-  
-    if (formData.dob.trim() === '') {
-      alert('Please enter your date of birth');
       return;
     }
 
@@ -110,18 +105,6 @@ const SignUp = () => {
               id="phone"
               name="phone"
               value={formData.phone}
-              onChange={handleChange}
-              className="w-2/4 border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="dob" className="block mb-1">Date of Birth</label>
-            <input
-              type="date"
-              id="dob"
-              name="dob"
-              value={formData.dob}
               onChange={handleChange}
               className="w-2/4 border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-blue-500"
               required
