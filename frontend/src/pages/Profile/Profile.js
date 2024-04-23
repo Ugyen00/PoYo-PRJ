@@ -1,9 +1,19 @@
 import React from 'react'
+import Navbar from '../../components/NavBar'
+import Footer from '../../components/Footer'
 
 const Profile = () => {
     return (
         <div>
-            Profile Page
+            <div>
+                <Navbar />
+            </div>
+            <div>
+                <h1 className='py-20'>
+
+                    Profile Page
+                </h1>
+            </div>
         </div>
     )
 }

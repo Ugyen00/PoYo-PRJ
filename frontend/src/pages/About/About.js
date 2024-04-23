@@ -4,7 +4,6 @@ import { SimpleGrid, Heading, Button, Image } from '@chakra-ui/react';
 import Navbar from '../../components/NavBar'
 import Footer from '../../components/Footer'
 
-
 export default function About() {
     return (
         <div>
@@ -22,7 +21,6 @@ export default function About() {
                         <p className="text-black text-lg m-4">By nature, we are AI Developers and FullStack enthusiasts.</p>
                     </div>
                     <div>
-
                         <SimpleGrid
                             spacing={4}
                             templateColumns='repeat(auto-fill, minmax(150px, 1fr))'
