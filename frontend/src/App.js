@@ -7,6 +7,11 @@ import Yoga from './pages/Yoga/Yoga'
 import About from './pages/About/About'
 import Yogaclass from './pages/YogaClass/Yogaclass'
 import Profile from './pages/Profile/Profile'
+import YogaPage1 from './pages/YogaPoseDetail/YogaPage1'
+import YogaPage2 from './pages/YogaPoseDetail/YogaPage2'
+import YogaPage3 from './pages/YogaPoseDetail/YogaPage3'
+import YogaPage4 from './pages/YogaPoseDetail/YogaPage4'
+
 
 import './App.css'
 import Signup from './pages/Forms/Signup'
@@ -21,6 +26,12 @@ export default function App() {
         <Route path='/yoga' element={<Yoga />} />
         <Route path='/about' element={<About />} />
         <Route path='/yogaclass' element={<Yogaclass />} />
+        <Route path='/yoga-pose/1' element={<YogaPage1 />} />
+        <Route path='/yoga-pose/2' element={<YogaPage2 />} />
+        <Route path='/yoga-pose/3' element={<YogaPage3 />} />
+        <Route path='/yoga-pose/4' element={<YogaPage4 />} />
+
+
         <Route path='/signup' element={<Signup />} />
         <Route path='/login' element={<Login />} />
       </Routes>
