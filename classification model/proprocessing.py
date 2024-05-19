@@ -2,15 +2,17 @@ import tensorflow as tf
 import numpy as np
 import pandas as pd 
 import os
-from movenet import Movenet
+from movenet import Movenet # Import the Movenet class from the 'movenet' module
 import wget
 import csv
 import tqdm 
-from data import BodyPart
+from data import BodyPart # Import the BodyPart class from the 'data' module
 
+# Check if the Movenet model file exists; if not, download it
 if('movenet_thunder.tflite' not in os.listdir()):
     wget.download('https://tfhub.dev/google/lite-model/movenet/singlepose/thunder/tflite/float16/4?lite-format=tflite', 'movenet_thunder.tflite')
 
+# Initialize the Movenet model using the downloaded TFLite file
 movenet = Movenet('movenet_thunder')
 
 def detect(input_tensor, inference_count=3):
@@ -26,6 +28,18 @@ class Preprocessor(object):
 #     this class preprocess pose samples, it predicts keypoints on the images 
 #     and save those keypoints in a csv file for the later use in the classification task 
 
+
+    # Preprocess pose samples by predicting keypoints and saving them in CSV files.
+
+    # Attributes:
+    #     _images_in_folder: Path to the folder containing pose images.
+    #     _csvs_out_path: Path to the output CSV file.
+    #     _csvs_out_folder_per_class: Folder to store CSV files per pose class.
+    #     _message: List to store messages during preprocessing.
+
+    # Methods:
+    #     process(detection_threshold=0.1): Preprocess images and save keypoints in CSV files.
+    
         def __init__(self, images_in_folder,
                     csvs_out_path):
             self._images_in_folder = images_in_folder
