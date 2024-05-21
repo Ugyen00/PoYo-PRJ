@@ -10,7 +10,6 @@ const Profile = () => {
             </div>
             <div>
                 <h1 className='py-20'>
-
                     Profile Page
                 </h1>
             </div>
