@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import Slider from 'react-slick'
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+/** @format */
+
+import React, { useState, useEffect } from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const Slider2 = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -20,13 +22,13 @@ const Slider2 = () => {
     };
 
     // Attach resize event listener
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     // Initial call to set slidesToShow based on initial window width
     handleResize();
 
     // Cleanup: remove resize event listener
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []); // Empty dependency array ensures the effect runs only once on mount
 
   const handleMouseEnter = (index) => {
@@ -44,17 +46,17 @@ const Slider2 = () => {
     slidesToShow: slidesToShow,
     slidesToScroll: 1,
     appendDots: (dots) => (
-      <div style={{ bottom: '-50px' }}>
-        <ul style={{ margin: '0px' }}> {dots} </ul>
+      <div style={{ bottom: "-50px" }}>
+        <ul style={{ margin: "0px" }}> {dots} </ul>
       </div>
     ),
     customPaging: (i) => (
       <div
         style={{
-          width: '20px',
-          height: '5px',
-          background: '#000', // Set the background color to black
-          borderRadius: '5px',
+          width: "20px",
+          height: "5px",
+          background: "#000", // Set the background color to black
+          borderRadius: "5px",
         }}
       ></div>
     ),
@@ -91,13 +93,14 @@ const Slider2 = () => {
   };
 
   return (
-    <div className='px-8 xl:px-16 py-24'>
+    <div className="px-8 xl:px-16 py-24">
       <Slider {...settings}>
         {[1, 2, 3, 4].map((index) => (
           <div
             key={index}
-            className={`text-white px-4 relative ${hoveredIndex === index ? 'hovered' : ''
-              }`}
+            className={`text-white px-4 relative ${
+              hoveredIndex === index ? "hovered" : ""
+            }`}
             onMouseEnter={() => handleMouseEnter(index)}
             onMouseLeave={handleMouseLeave}
           >
