@@ -98,7 +98,7 @@ function Yoga() {
         await tf.setBackend('webgl');  // Set the backend to 'webgl'
         const detectorConfig = { modelType: poseDetection.movenet.modelType.SINGLEPOSE_THUNDER };
         const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
-        const poseClassifier = await tf.loadLayersModel('https://models.s3.jp-tok.cloud-object-storage.appdomain.cloud/model.json');
+        const poseClassifier = await tf.loadLayersModel(process.env.REACT_APP_MODEL_URL);
         const countAudio = new Audio(count);
         countAudio.loop = true;
         interval = setInterval(() => {

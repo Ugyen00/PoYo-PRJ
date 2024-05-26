@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'
+import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
 
 
 export default function NavBar() {
@@ -18,17 +19,24 @@ export default function NavBar() {
                         className="h-10"
                     />
                 </a>
-                {/* Hamburger menu button */}
-                <button className="block sm:hidden" onClick={toggleNav}>
-                    <div className="w-6 h-6">
-                        <svg viewBox="0 0 100 80" width="30" height="30" fill="black">
-                            <rect width="100" height="15" rx="8"></rect>
-                            <rect y="30" width="100" height="15" rx="8"></rect>
-                            <rect y="60" width="100" height="15" rx="8"></rect>
-                        </svg>
-                    </div>
-                </button>
+                <div className="flex items-center">
+                    <SignedIn>
+                        <div className="block sm:hidden mr-4 mt-2">
+                            <UserButton afterSignOutUrl='/' />
+                        </div>
+                    </SignedIn>
 
+                    {/* Hamburger menu button */}
+                    <button className="block sm:hidden" onClick={toggleNav}>
+                        <div className="w-6 h-6">
+                            <svg viewBox="0 0 100 80" width="30" height="30" fill="black">
+                                <rect width="100" height="15" rx="8"></rect>
+                                <rect y="30" width="100" height="15" rx="8"></rect>
+                                <rect y="60" width="100" height="15" rx="8"></rect>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
                 {/* Side slider menu */}
                 <div className={`fixed top-0 right-0 h-screen w-52 bg-white z-1000 transform transition-transform duration-300 ease-in-out ${isNavOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                     {/* Close button */}
@@ -62,27 +70,62 @@ export default function NavBar() {
                                 About Us
                             </button>
                         </Link>
-                        <Link to='/profile' onClick={toggleNav}>
-                            <button className="py-2 px-2 mb-2 text-base text-black text-left bg-transparent outline-none cursor-pointer">
-                                Profile
-                            </button>
-                        </Link>
+
+                        <SignedIn>
+                            <Link to='/profile' onClick={toggleNav}>
+                                <button className="py-2 px-2 mb-2 text-base text-black text-left bg-transparent outline-none cursor-pointer">
+                                    Profile
+                                </button>
+                            </Link>
+                        </SignedIn>
+                        <SignedOut>
+                            <Link to='/profile' onClick={toggleNav}>
+                                <button className="py-2 px-2 mb-2 text-base text-black text-left bg-transparent outline-none cursor-pointer">
+                                    Login
+                                </button>
+                            </Link>
+                            <Link to='/profile' onClick={toggleNav}>
+                                <button className="py-2 px-2 mb-2 text-base text-black text-left bg-transparent outline-none cursor-pointer">
+                                    Signup
+                                </button>
+                            </Link>
+                        </SignedOut>
                     </div>
                 </div>
                 {/* Navigation links for larger screens */}
                 <div className="hidden sm:flex space-x-4">
-                    <Link to='/yogaclass'>
-                        <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Yoga Class</button>
-                    </Link>
-                    <Link to='/yoga'>
-                        <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Live Session</button>
-                    </Link>
-                    <Link to='/about'>
-                        <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">About Us</button>
-                    </Link>
-                    <Link to='/profile'>
-                        <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Profile</button>
-                    </Link>
+                    <SignedIn>
+                        <Link to='/yogaclass'>
+                            <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Yoga Class</button>
+                        </Link>
+                        <Link to='/yoga'>
+                            <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Live Session</button>
+                        </Link>
+                        <Link to='/about'>
+                            <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">About Us</button>
+                        </Link>
+                        <Link to='/profile'>
+                            <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Profile</button>
+                        </Link>
+                        <UserButton afterSignOutUrl='/' />
+                    </SignedIn>
+                    <SignedOut>
+                        <Link to='/yogaclass'>
+                            <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Yoga Class</button>
+                        </Link>
+                        <Link to='/yoga'>
+                            <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Live Session</button>
+                        </Link>
+                        <Link to='/about'>
+                            <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">About Us</button>
+                        </Link>
+                        <Link to='/profile'>
+                            <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Login</button>
+                        </Link>
+                        <Link to='/profile'>
+                            <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Signup</button>
+                        </Link>
+                    </SignedOut>
                 </div>
             </div>
         </div>
