@@ -1,8 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 8080;
-
-const MONGODB_URL = process.env.MONGODB_URL
+const port = 8080
 
 // Define routes
 app.get('/', (req, res) => {
