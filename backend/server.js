@@ -1,7 +1,8 @@
-// Import required modules
 const express = require('express');
 const app = express();
-const port = 3000; // Set your desired port number
+const port = 8080;
+
+const MONGODB_URL = process.env.MONGODB_URL
 
 // Define routes
 app.get('/', (req, res) => {
