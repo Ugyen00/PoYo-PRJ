@@ -5,7 +5,7 @@ import { Webhook } from 'svix';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import User from './userModel.js';
-import Best from './bestModel.js'; // Import the Best model
+import Best from './bestModel.js'; // Import Best model
 
 dotenv.config();
 
@@ -113,6 +113,73 @@ app.get('/api/user-profile/:userId', async (req, res) => {
                 message: 'User not found',
             });
         }
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+});
+
+// Endpoint to get user's best pose times
+app.get('/api/bests/:userId', async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const best = await Best.findOne({ clerkUserId: userId });
+
+        if (best) {
+            res.status(200).json({
+                success: true,
+                bestPoseTime: best.bestPoseTime,
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'Best pose time not found',
+            });
+        }
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+});
+
+// Endpoint to get leaderboard data
+app.get('/api/leaderboard', async (req, res) => {
+    try {
+        const leaderboard = await Best.aggregate([
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'clerkUserId',
+                    foreignField: 'clerkUserId',
+                    as: 'userDetails'
+                }
+            },
+            {
+                $unwind: '$userDetails'
+            },
+            {
+                $sort: { bestPoseTime: 1 } // Sort by bestPoseTime ascending
+            },
+            {
+                $project: {
+                    _id: 0,
+                    clerkUserId: 1,
+                    bestPoseTime: 1,
+                    'userDetails.firstName': 1,
+                    'userDetails.lastName': 1
+                }
+            }
+        ]);
+
+        res.status(200).json({
+            success: true,
+            leaderboard,
+        });
     } catch (err) {
         res.status(500).json({
             success: false,
