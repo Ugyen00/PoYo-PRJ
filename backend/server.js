@@ -5,6 +5,7 @@ import { Webhook } from 'svix';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import User from './userModel.js';
+import Best from './bestModel.js'; // Import the Best model
 
 dotenv.config();
 
@@ -17,9 +18,10 @@ mongoose
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000' // Update this to match your frontend's origin
+}));
 
-// Middleware to capture raw body
 app.use(bodyParser.json({
     verify: (req, res, buf) => {
         req.rawBody = buf.toString();
@@ -31,7 +33,6 @@ app.post('/api/webhooks', async (req, res) => {
         const payloadString = req.rawBody;
         const svixHeaders = req.headers;
 
-        // Log headers and raw body for debugging purposes
         console.log('Headers:', svixHeaders);
         console.log('Raw Body:', payloadString);
 
@@ -42,21 +43,19 @@ app.post('/api/webhooks', async (req, res) => {
         const eventType = evt.type;
 
         if (eventType === 'user.created') {
-            // console.log(`User ${id} was ${eventType}`);
-            // console.log(attributes);
             const firstName = attributes.first_name;
             const lastName = attributes.last_name;
 
-            console.log(firstName)
+            console.log(firstName);
 
             const user = new User({
                 clerkUserId: id,
                 firstName: firstName,
                 lastName: lastName
-            })
+            });
 
             await user.save();
-            console.log('User is created')
+            console.log('User is created');
         }
 
         res.status(200).json({
@@ -66,6 +65,56 @@ app.post('/api/webhooks', async (req, res) => {
     } catch (err) {
         console.error('Error verifying webhook:', err);
         res.status(400).json({
+            success: false,
+            message: err.message,
+        });
+    }
+});
+
+// Endpoint to update user's best pose time
+app.post('/api/update-best-time', async (req, res) => {
+    const { clerkUserId, bestPoseTime } = req.body;
+
+    try {
+        const best = await Best.findOneAndUpdate(
+            { clerkUserId: clerkUserId },
+            { bestPoseTime: bestPoseTime },
+            { new: true, upsert: true } // Create a new document if one doesn't exist
+        );
+
+        res.status(200).json({
+            success: true,
+            message: 'Best pose time updated',
+            best,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+});
+
+// Endpoint to get user's profile data
+app.get('/api/user-profile/:userId', async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const user = await User.findOne({ clerkUserId: userId });
+
+        if (user) {
+            res.status(200).json({
+                success: true,
+                user,
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'User not found',
+            });
+        }
+    } catch (err) {
+        res.status(500).json({
             success: false,
             message: err.message,
         });
