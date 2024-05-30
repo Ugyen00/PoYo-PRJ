@@ -5,7 +5,6 @@ import Webcam from 'react-webcam';
 import { count } from '../../utils/music';
 import Instructions from '../../components/Instrctions/Instructions';
 import DropDown from '../../components/DropDown/DropDown';
-import { poseImages } from '../../utils/pose_images';
 import { POINTS, keypointConnections } from '../../utils/data';
 import { drawPoint, drawSegment } from '../../utils/helper';
 import Navbar from '../../components/NavBar';
@@ -179,6 +178,15 @@ function Yoga() {
         setIsStartPose(false);
         clearInterval(interval);
     }
+    const poseVideoUrls = {
+        Tree: "https://www.youtube.com/embed/Fr5kiIygm0c?autoplay=1&loop=1&playlist=Fr5kiIygm0c&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3",
+        Chair: "https://www.youtube.com/embed/tEZhXr0FuAQ?autoplay=1&loop=1&playlist=tEZhXr0FuAQ&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3",
+        Cobra: "https://www.youtube.com/embed/pVmOOluGAv8?autoplay=1&loop=1&playlist=pVmOOluGAv8&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3",
+        Warrior: "https://www.youtube.com/embed/Mn6RSIRCV3w?autoplay=1&loop=1&playlist=Mn6RSIRCV3w&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3",
+        Dog: "https://www.youtube.com/embed/EC7RGJ975iM?autoplay=1&loop=1&playlist=EC7RGJ975iM&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3",
+        Shoulderstand: "https://www.youtube.com/embed/UjHTOW9x3WM?autoplay=1&loop=1&playlist=UjHTOW9x3WM&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3",
+        Triangle: "https://www.youtube.com/embed/S6gB0QHbWFE?autoplay=1&loop=1&playlist=S6gB0QHbWFE&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3"
+    };    
 
     if (isStartPose) {
         return (
@@ -206,10 +214,17 @@ function Yoga() {
                             className="absolute right-12 top-42 z-10"
                         />
                         <div>
-                            <img
-                                src={poseImages[currentPose]}
-                                className="absolute left-32 top-56 w-80 aspect-w-1 aspect-h-1"
-                            />
+                            <iframe 
+                                width="450" 
+                                height="253" 
+                                src={poseVideoUrls[currentPose]} 
+                                frameBorder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                referrerPolicy="strict-origin-when-cross-origin" 
+                                allowFullScreen
+                                className="absolute left-32 top-56">
+                            </iframe>
+                           
                             <div className="flex justify-center item-center absolute left-40 py-96">
                                 <div>
                                     <h1>Pose Time: {poseTime} s</h1>
