@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "engines": {
     "node": "20.x"
   },
@@ -21,6 +22,7 @@
     "express": "^4.19.2",
     "nodemon": "^3.1.0",
     "react-slick": "^0.30.2",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "svix": "^1.24.0"
   }
 }
