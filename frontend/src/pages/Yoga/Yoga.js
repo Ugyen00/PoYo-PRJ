@@ -177,13 +177,30 @@ function Yoga() {
         runMovenet();
     }
 
+    // function stopPose() {
+    //     setIsStartPose(false);
+    //     clearInterval(interval);
+
+    //     // Save the best performance time to the backend
+    //     const clerkUserId = user.id; // Get the user's Clerk ID
+    //     axios.post('http://localhost/api/update-best-time', {
+    //         clerkUserId,
+    //         bestPoseTime: bestPerform
+    //     })
+    //         .then(response => {
+    //             console.log(response.data.message);
+    //         })
+    //         .catch(error => {
+    //             console.error('Error updating best pose time:', error);
+    //         });
+    // }
     function stopPose() {
         setIsStartPose(false);
         clearInterval(interval);
 
         // Save the best performance time to the backend
         const clerkUserId = user.id; // Get the user's Clerk ID
-        axios.post('http://localhost/api/update-best-time', {
+        axios.post('http://localhost:80/api/update-best-time', {
             clerkUserId,
             bestPoseTime: bestPerform
         })
@@ -194,6 +211,7 @@ function Yoga() {
                 console.error('Error updating best pose time:', error);
             });
     }
+
 
     const poseVideoUrls = {
         Tree: "https://www.youtube.com/embed/Fr5kiIygm0c?autoplay=1&loop=1&playlist=Fr5kiIygm0c&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3",

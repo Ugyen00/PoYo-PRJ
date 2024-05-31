@@ -73,20 +73,53 @@ app.post('/api/webhooks', async (req, res) => {
 });
 
 // Endpoint to update user's best pose time
+// app.post('/api/update-best-time', async (req, res) => {
+//     const { clerkUserId, bestPoseTime } = req.body;
+
+//     try {
+//         const best = await Best.findOneAndUpdate(
+//             { clerkUserId: clerkUserId },
+//             { bestPoseTime: bestPoseTime },
+//             { new: true, upsert: true }
+//         );
+
+//         res.status(200).json({
+//             success: true,
+//             message: 'Best pose time updated',
+//             best,
+//         });
+//     } catch (err) {
+//         res.status(500).json({
+//             success: false,
+//             message: err.message,
+//         });
+//     }
+// });
+
+// Endpoint to update user's best pose time
 app.post('/api/update-best-time', async (req, res) => {
     const { clerkUserId, bestPoseTime } = req.body;
 
     try {
-        const best = await Best.findOneAndUpdate(
-            { clerkUserId: clerkUserId },
-            { bestPoseTime: bestPoseTime },
-            { new: true, upsert: true }
-        );
+        const existingBest = await Best.findOne({ clerkUserId: clerkUserId });
+
+        if (existingBest) {
+            // Update only if the new time is better
+            if (bestPoseTime > existingBest.bestPoseTime) {
+                existingBest.bestPoseTime = bestPoseTime;
+                await existingBest.save();
+            }
+        } else {
+            const newBest = new Best({
+                clerkUserId: clerkUserId,
+                bestPoseTime: bestPoseTime,
+            });
+            await newBest.save();
+        }
 
         res.status(200).json({
             success: true,
             message: 'Best pose time updated',
-            best,
         });
     } catch (err) {
         res.status(500).json({
