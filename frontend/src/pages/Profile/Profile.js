@@ -9,6 +9,8 @@ const Profile = () => {
     const [bestPoseTime, setBestPoseTime] = useState(null);
     const [leaderboard, setLeaderboard] = useState([]);
 
+    const sortedLeaderboard = [...leaderboard].sort((a, b) => b.bestPoseTime - a.bestPoseTime);
+
     useEffect(() => {
         if (!user) return;
 
@@ -84,11 +86,11 @@ const Profile = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {leaderboard.map((entry, index) => (
+                                {sortedLeaderboard.map((entry, index) => (
                                     <tr key={entry.clerkUserId} className={`${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
-                                        <td className="border px-4 py-2">{index + 1}</td>
-                                        <td className="border px-4 py-2">{`${entry.userDetails.firstName} ${entry.userDetails.lastName}`}</td>
-                                        <td className="border px-4 py-2">{entry.bestPoseTime}</td>
+                                        <td className="border px-4 py-2 text-center">{index + 1}</td>
+                                        <td className="border px-4 py-2 text-center">{`${entry.userDetails.firstName} ${entry.userDetails.lastName}`}</td>
+                                        <td className="border px-4 py-2 text-center">{entry.bestPoseTime} Sec</td>
                                     </tr>
                                 ))}
                             </tbody>
