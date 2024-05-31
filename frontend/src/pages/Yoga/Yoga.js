@@ -183,7 +183,7 @@ function Yoga() {
 
         // Save the best performance time to the backend
         const clerkUserId = user.id; // Get the user's Clerk ID
-        axios.post('http://localhost:80/api/update-best-time', {
+        axios.post('http://localhost/api/update-best-time', {
             clerkUserId,
             bestPoseTime: bestPerform
         })
@@ -246,11 +246,11 @@ function Yoga() {
                                 className="absolute left-32 top-56">
                             </iframe>
 
-                            <div className="flex justify-center item-center absolute left-40 py-96">
-                                <div>
+                            <div className="flex justify-center items-center absolute left-32 py-80 space-x-8">
+                                <div className="bg-[#496F46] text-[#CCD6B7] px-4 py-2 rounded-lg text-xl font-mono text-center w-48">
                                     <h1>Pose Time: {poseTime} s</h1>
                                 </div>
-                                <div className="ml-8">
+                                <div className="bg-[#496F46] text-[#CCD6B7] px-4 py-2 rounded-lg text-xl font-mono text-center w-48">
                                     <h1>Your Best: {bestPerform} s</h1>
                                 </div>
                             </div>
@@ -258,7 +258,7 @@ function Yoga() {
                     </div>
                     <button
                         onClick={stopPose}
-                        className="bg-[red] hover:bg-[#966A61] text-white font-bold py-2 px-4 rounded absolute bottom-10 left-1/2 transform -translate-x-1/2"
+                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded absolute bottom-10 left-1/2 transform -translate-x-1/2"
                     >Stop Pose</button>
                 </div>
             </div>

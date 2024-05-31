@@ -19,8 +19,9 @@ mongoose
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:300/'
+    origin: 'http://localhost:3000'
 }));
+
 
 app.use(bodyParser.json({
     verify: (req, res, buf) => {

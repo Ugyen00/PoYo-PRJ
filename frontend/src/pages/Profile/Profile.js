@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Navbar from '../../components/NavBar';
+import NavBar from '../../components/NavBar';
 import Footer from '../../components/Footer';
 import { useUser } from '@clerk/clerk-react';
 
@@ -51,35 +51,54 @@ const Profile = () => {
 
     return (
         <div>
-            <Navbar />
-            <div className="container mx-auto py-20">
-                <h1 className='py-20'>Profile Page</h1>
-                <h2>First Name: {user.firstName}</h2>
-                <h2>Last Name: {user.lastName}</h2>
-                <h2>Best Performance Time: {bestPoseTime ? `${bestPoseTime} s` : 'N/A'}</h2>
-
-                <h1 className="text-2xl font-bold mt-10">Leaderboard</h1>
-                <table className="min-w-full bg-white mt-5">
-                    <thead>
-                        <tr>
-                            <th className="py-2 px-4 bg-gray-200">Rank</th>
-                            <th className="py-2 px-4 bg-gray-200">Name</th>
-                            <th className="py-2 px-4 bg-gray-200">Best Pose Time (s)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {leaderboard.map((entry, index) => (
-                            <tr key={entry.clerkUserId}>
-                                <td className="border px-4 py-2">{index + 1}</td>
-                                <td className="border px-4 py-2">{`${entry.userDetails.firstName} ${entry.userDetails.lastName}`}</td>
-                                <td className="border px-4 py-2">{entry.bestPoseTime}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            <NavBar />
+            <div className='py-24'>
+                <img
+                    src='/images/profile.svg'
+                    width={250}
+                    height={60}
+                    className='flex justify-center items-center mx-auto'
+                    alt='Yoga Class'
+                />
+                <div className="container mx-auto py-20 px-56 flex">
+                    {/* Profile Section */}
+                    <div className="profile-section bg-[#A5B28F] p-5 rounded-lg shadow-lg">
+                        <div className="profile-image">
+                            <img src="https://via.placeholder.com/150" alt="User Avatar" className="rounded-full w-24 h-24 mx-auto" />
+                        </div>
+                        <h2 className="text-center text-xl font-bold mt-3">{`${user.firstName} ${user.lastName}`}</h2>
+                        <div className="total-time bg-gray-200 p-3 mt-3 rounded-lg text-center">
+                            <h3>Total Time:</h3>
+                            <span className="text-3xl font-bold">{bestPoseTime || 0}</span> s
+                        </div>
+                    </div>
+                    {/* Leaderboard Section */}
+                    <div className="leaderboard-section bg-[#A5B28F] p-5 rounded-lg shadow-lg ml-10 flex-grow">
+                        <h1 className="text-2xl font-bold text-center mb-5">LEADERBOARD</h1>
+                        <table className="min-w-full bg-white">
+                            <thead>
+                                <tr>
+                                    <th className="py-2 px-4 bg-gray-200">Rank</th>
+                                    <th className="py-2 px-4 bg-gray-200">Name</th>
+                                    <th className="py-2 px-4 bg-gray-200">Overall Best Time (s)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {leaderboard.map((entry, index) => (
+                                    <tr key={entry.clerkUserId} className={`${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
+                                        <td className="border px-4 py-2">{index + 1}</td>
+                                        <td className="border px-4 py-2">{`${entry.userDetails.firstName} ${entry.userDetails.lastName}`}</td>
+                                        <td className="border px-4 py-2">{entry.bestPoseTime}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <Footer />
         </div>
+
     );
 };
 
