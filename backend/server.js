@@ -19,7 +19,7 @@ mongoose
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3000' // Update this to match your frontend's origin
+    origin: 'http://localhost:300/'
 }));
 
 app.use(bodyParser.json({
@@ -79,7 +79,7 @@ app.post('/api/update-best-time', async (req, res) => {
         const best = await Best.findOneAndUpdate(
             { clerkUserId: clerkUserId },
             { bestPoseTime: bestPoseTime },
-            { new: true, upsert: true } // Create a new document if one doesn't exist
+            { new: true, upsert: true }
         );
 
         res.status(200).json({
@@ -94,6 +94,7 @@ app.post('/api/update-best-time', async (req, res) => {
         });
     }
 });
+
 
 // Endpoint to get user's profile data
 app.get('/api/user-profile/:userId', async (req, res) => {
@@ -147,6 +148,7 @@ app.get('/api/bests/:userId', async (req, res) => {
     }
 });
 
+
 // Endpoint to get leaderboard data
 app.get('/api/leaderboard', async (req, res) => {
     try {
@@ -163,7 +165,7 @@ app.get('/api/leaderboard', async (req, res) => {
                 $unwind: '$userDetails'
             },
             {
-                $sort: { bestPoseTime: 1 } // Sort by bestPoseTime ascending
+                $sort: { bestPoseTime: 1 }
             },
             {
                 $project: {
