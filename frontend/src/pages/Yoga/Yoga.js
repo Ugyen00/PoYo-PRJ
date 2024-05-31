@@ -8,13 +8,11 @@ import DropDown from '../../components/DropDown/DropDown';
 import { POINTS, keypointConnections } from '../../utils/data';
 import { drawPoint, drawSegment } from '../../utils/helper';
 import Navbar from '../../components/NavBar';
-import axios from 'axios';
-import { useUser } from '@clerk/clerk-react';
 
 let skeletonColor = 'rgb(255,255,255)';
 let poseList = [
     'Tree', 'Chair', 'Cobra', 'Warrior', 'Dog',
-    'Shoulderstand', 'Triangle'
+    'Shoulderstand'
 ];
 
 let interval;
@@ -23,7 +21,6 @@ let flag = false;
 function Yoga() {
     const webcamRef = useRef(null);
     const canvasRef = useRef(null);
-    const { user } = useUser();
 
     const [startingTime, setStartingTime] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
@@ -177,41 +174,10 @@ function Yoga() {
         runMovenet();
     }
 
-    // function stopPose() {
-    //     setIsStartPose(false);
-    //     clearInterval(interval);
-
-    //     // Save the best performance time to the backend
-    //     const clerkUserId = user.id; // Get the user's Clerk ID
-    //     axios.post('http://localhost/api/update-best-time', {
-    //         clerkUserId,
-    //         bestPoseTime: bestPerform
-    //     })
-    //         .then(response => {
-    //             console.log(response.data.message);
-    //         })
-    //         .catch(error => {
-    //             console.error('Error updating best pose time:', error);
-    //         });
-    // }
     function stopPose() {
         setIsStartPose(false);
         clearInterval(interval);
-
-        // Save the best performance time to the backend
-        const clerkUserId = user.id; // Get the user's Clerk ID
-        axios.post('http://localhost:80/api/update-best-time', {
-            clerkUserId,
-            bestPoseTime: bestPerform
-        })
-            .then(response => {
-                console.log(response.data.message);
-            })
-            .catch(error => {
-                console.error('Error updating cumulative pose time:', error);
-            });
     }
-
     const poseVideoUrls = {
         Tree: "https://www.youtube.com/embed/Fr5kiIygm0c?autoplay=1&loop=1&playlist=Fr5kiIygm0c&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3",
         Chair: "https://www.youtube.com/embed/tEZhXr0FuAQ?autoplay=1&loop=1&playlist=tEZhXr0FuAQ&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3",
@@ -220,10 +186,6 @@ function Yoga() {
         Dog: "https://www.youtube.com/embed/EC7RGJ975iM?autoplay=1&loop=1&playlist=EC7RGJ975iM&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3",
         Shoulderstand: "https://www.youtube.com/embed/UjHTOW9x3WM?autoplay=1&loop=1&playlist=UjHTOW9x3WM&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3",
         Triangle: "https://www.youtube.com/embed/S6gB0QHbWFE?autoplay=1&loop=1&playlist=S6gB0QHbWFE&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3"
-    };
-
-    const changePose = (event) => {
-        setCurrentPose(event.target.value);
     };
 
     if (isStartPose) {
@@ -263,11 +225,11 @@ function Yoga() {
                                 className="absolute left-32 top-56">
                             </iframe>
 
-                            <div className="flex justify-center items-center absolute left-32 py-80 space-x-8">
-                                <div className="bg-[#496F46] text-[#CCD6B7] px-4 py-2 rounded-lg text-xl font-mono text-center w-48">
+                            <div className="flex justify-center item-center absolute left-40 py-96">
+                                <div>
                                     <h1>Pose Time: {poseTime} s</h1>
                                 </div>
-                                <div className="bg-[#496F46] text-[#CCD6B7] px-4 py-2 rounded-lg text-xl font-mono text-center w-48">
+                                <div className="ml-8">
                                     <h1>Your Best: {bestPerform} s</h1>
                                 </div>
                             </div>
@@ -275,7 +237,7 @@ function Yoga() {
                     </div>
                     <button
                         onClick={stopPose}
-                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded absolute bottom-10 left-1/2 transform -translate-x-1/2"
+                        className="bg-[red] hover:bg-[#966A61] text-white font-bold py-2 px-4 rounded absolute bottom-10 left-1/2 transform -translate-x-1/2"
                     >Stop Pose</button>
                 </div>
             </div>
