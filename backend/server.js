@@ -97,6 +97,7 @@ app.post('/api/webhooks', async (req, res) => {
 // });
 
 // Endpoint to update user's best pose time
+// Endpoint to update user's cumulative pose time
 app.post('/api/update-best-time', async (req, res) => {
     const { clerkUserId, bestPoseTime } = req.body;
 
@@ -104,22 +105,20 @@ app.post('/api/update-best-time', async (req, res) => {
         const existingBest = await Best.findOne({ clerkUserId: clerkUserId });
 
         if (existingBest) {
-            // Update only if the new time is better
-            if (bestPoseTime > existingBest.bestPoseTime) {
-                existingBest.bestPoseTime = bestPoseTime;
-                await existingBest.save();
-            }
+            // Add the new time to the existing cumulative time
+            existingBest.cumulativePoseTime += bestPoseTime;
+            await existingBest.save();
         } else {
             const newBest = new Best({
                 clerkUserId: clerkUserId,
-                bestPoseTime: bestPoseTime,
+                cumulativePoseTime: bestPoseTime,
             });
             await newBest.save();
         }
 
         res.status(200).json({
             success: true,
-            message: 'Best pose time updated',
+            message: 'Cumulative pose time updated',
         });
     } catch (err) {
         res.status(500).json({
@@ -128,6 +127,7 @@ app.post('/api/update-best-time', async (req, res) => {
         });
     }
 });
+
 
 
 // Endpoint to get user's profile data

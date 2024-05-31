@@ -20,9 +20,10 @@ const bestSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    bestPoseTime: {
+    cumulativePoseTime: {
         type: Number,
         required: true,
+        default: 0,
     },
 });
 
