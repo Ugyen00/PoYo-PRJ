@@ -81,41 +81,47 @@ app.post('/api/update-best-time', async (req, res) => {
     const { clerkUserId, bestPoseTime, pose_name } = req.body;
 
     try {
-        const existingBest = await Best.findOne({ clerkUserId: clerkUserId, pose: pose_name });
+        // const existingBest = await Best.findOne({ clerkUserId: clerkUserId, pose: pose_name });
 
-        if (existingBest) {
-            const currentBestTime = existingBest.bestTime || 0;
+        // if (existingBest) {
+        //     const currentBestTime = existingBest.bestTime || 0;
 
-            if (bestPoseTime > currentBestTime) {
-                existingBest.bestTime = bestPoseTime;
-                existingBest.date = new Date();
-                await existingBest.save();
+        //     if (bestPoseTime > currentBestTime) {
+        //         existingBest.bestTime = bestPoseTime;
+        //         existingBest.date = new Date();
+        //         await existingBest.save();
 
-                res.status(200).json({
-                    success: true,
-                    message: 'Best time updated',
-                });
-            } else {
-                res.status(200).json({
-                    success: true,
-                    message: 'New best time is not greater than the current best time',
-                });
-            }
-        } else {
-            let newBest = new Best({
-                clerkUserId: clerkUserId,
-                pose: pose_name,
-                bestTime: bestPoseTime,
-                date: new Date()
-            });
+        //         res.status(200).json({
+        //             success: true,
+        //             message: 'Best time updated',
+        //         });
+        //     } else {
+        //         res.status(200).json({
+        //             success: true,
+        //             message: 'New best time is not greater than the current best time',
+        //         });
+        //     }
+        // } else {
+        //     let newBest = new Best({
+        //         clerkUserId: clerkUserId,
+        //         pose: pose_name,
+        //         bestTime: bestPoseTime,
+        //         date: new Date()
+        //     });
 
-            await newBest.save();
+        //     await newBest.save();
 
-            res.status(200).json({
-                success: true,
-                message: 'New best time created',
-            });
-        }
+        //     res.status(200).json({
+        //         success: true,
+        //         message: 'New best time created',
+        //     });
+        // }
+        let updateObject = {};
+        updateObject[`${pose_name}_best`] = bestPoseTime;
+        updateObject['$inc'] = { cumulativePoseTime: bestPoseTime }
+        const updateBest = await Best.findOneAndUpdate({ clerkUserId: clerkUserId }, updateObject, { new: true, upsert: true })
+        console.log(updateBest)
+        res.status(200).json({ success: true, message: "cumulative pose time updated" })
     } catch (err) {
         console.log(err);
         res.status(500).json({
