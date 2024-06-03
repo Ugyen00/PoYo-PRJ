@@ -232,14 +232,16 @@ app.post('/api/update-performance', async (req, res) => {
         const dateField = `${pose_name}_best.date`;
 
         // const pose1 = `${pose}_best`
+        const today = new Date()
+        const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+        const endOfDay = new Date(today.setHours(23, 59, 59, 999));
         const existingPerformance = await Performance.findOne({
             clerkUserId: clerkUserId,
             // pose: pose,
             [dateField]: {
-                date: {
-                    $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of the day
-                    $lt: new Date(new Date().setHours(23, 59, 59, 999)) // End of the day
-                }
+                $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of the day
+                $lt: new Date(new Date().setHours(23, 59, 59, 999)) // End of the day
+
             }
         });
 
