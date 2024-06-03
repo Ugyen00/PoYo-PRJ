@@ -3,6 +3,8 @@ import axios from 'axios';
 import NavBar from '../../components/NavBar';
 import Footer from '../../components/Footer';
 import { useUser } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
+
 
 const poseList = [
     'Tree', 'Chair', 'Cobra', 'Warrior', 'Dog', 'Shoulderstand'
@@ -26,7 +28,7 @@ const Profile = () => {
 
             try {
                 // Fetch user profile data
-                const userProfileResponse = await axios.get(`https://poyo-prj-backend.onrender.com/api/user-profile/${clerkUserId}`);
+                const userProfileResponse = await axios.get(`http://localhost:80/api/user-profile/${clerkUserId}`);
                 console.log('User profile data:', userProfileResponse.data);
                 setBestPoseTime(userProfileResponse.data.user[`${selectedPose}_best`]);
                 setCumulativePoseTime(userProfileResponse.data.user.cumulativePoseTime);
@@ -48,7 +50,7 @@ const Profile = () => {
     useEffect(() => {
         const fetchLeaderboardData = async () => {
             try {
-                const response = await axios.get(`https://poyo-prj-backend.onrender.com/api/leaderboard?pose=${selectedPose}`);
+                const response = await axios.get(`http://localhost:80/api/leaderboard?pose=${selectedPose}`);
                 console.log('Leaderboard data:', response.data);
                 setLeaderboard(response.data.leaderboard);
             } catch (error) {
@@ -75,8 +77,10 @@ const Profile = () => {
                     {/* Profile Section */}
                     {user && (
                         <div className="profile-section bg-[#A5B28F] p-5 rounded-lg shadow-lg">
-                            <div className="profile-image">
-                                <img src="https://via.placeholder.com/150" alt="User Avatar" className="rounded-full w-24 h-24 mx-auto" />
+                            <div className="profile-image text-center">
+                                <div className="user-button-large mt-2">
+                                    <UserButton afterSignOutUrl='/' />
+                                </div>
                             </div>
                             <h2 className="text-center text-xl font-bold mt-3">{`${user.firstName} ${user.lastName}`}</h2>
                             <div className="total-time bg-gray-200 p-3 mt-3 rounded-lg text-center">
