@@ -19,11 +19,11 @@ const Profile = () => {
     const sortedLeaderboard = [...leaderboard].sort((a, b) => b[`${selectedPose}_best`] - a[`${selectedPose}_best`]);
 
     useEffect(() => {
-        if (!user) return;
-
-        const clerkUserId = user.id;
-
         const fetchUserData = async () => {
+            if (!user) return;
+
+            const clerkUserId = user.id;
+
             try {
                 // Fetch user profile data
                 const userProfileResponse = await axios.get(`http://localhost:80/api/user-profile/${clerkUserId}`);
@@ -37,30 +37,27 @@ const Profile = () => {
                 }, {});
 
                 setUserBestTimes(bestTimes);
-
-                // Fetch leaderboard data
-                await fetchLeaderboardData(selectedPose);
             } catch (error) {
-                console.error('Error fetching user profile or leaderboard:', error);
+                console.error('Error fetching user profile:', error);
             }
         };
 
         fetchUserData();
     }, [user, selectedPose]);
 
-    const fetchLeaderboardData = async (pose) => {
-        try {
-            const response = await axios.get(`http://localhost:80/api/leaderboard?pose=${pose}`);
-            console.log('Leaderboard data:', response.data);
-            setLeaderboard(response.data.leaderboard);
-        } catch (error) {
-            console.error('Error fetching leaderboard data:', error);
-        }
-    };
+    useEffect(() => {
+        const fetchLeaderboardData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:80/api/leaderboard?pose=${selectedPose}`);
+                console.log('Leaderboard data:', response.data);
+                setLeaderboard(response.data.leaderboard);
+            } catch (error) {
+                console.error('Error fetching leaderboard data:', error);
+            }
+        };
 
-    if (!user) {
-        return <div>Loading...</div>;
-    }
+        fetchLeaderboardData();
+    }, [selectedPose]);
 
     return (
         <div>
@@ -76,35 +73,37 @@ const Profile = () => {
                 />
                 <div className="container mx-auto py-20 px-56 flex">
                     {/* Profile Section */}
-                    <div className="profile-section bg-[#A5B28F] p-5 rounded-lg shadow-lg">
-                        <div className="profile-image">
-                            <img src="https://via.placeholder.com/150" alt="User Avatar" className="rounded-full w-24 h-24 mx-auto" />
-                        </div>
-                        <h2 className="text-center text-xl font-bold mt-3">{`${user.firstName} ${user.lastName}`}</h2>
-                        <div className="total-time bg-gray-200 p-3 mt-3 rounded-lg text-center">
-                            <h3>Total Time:</h3>
-                            <span className="text-3xl font-bold">{cumulativePoseTime || 0}</span> s
-                        </div>
-                        <div className="best-times mt-5">
-                            <h3 className="text-center text-xl font-bold">Best Times for Each Pose</h3>
-                            <table className="min-w-full bg-white mt-3 border">
-                                <thead>
-                                    <tr>
-                                        <th className="py-2 px-4 bg-gray-200 border">Pose</th>
-                                        <th className="py-2 px-4 bg-gray-200 border">Best Time (s)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {poseList.map(pose => (
-                                        <tr key={pose} className="text-center">
-                                            <td className="border px-4 py-2">{pose}</td>
-                                            <td className="border px-4 py-2">{userBestTimes[pose]} s</td>
+                    {user && (
+                        <div className="profile-section bg-[#A5B28F] p-5 rounded-lg shadow-lg">
+                            <div className="profile-image">
+                                <img src="https://via.placeholder.com/150" alt="User Avatar" className="rounded-full w-24 h-24 mx-auto" />
+                            </div>
+                            <h2 className="text-center text-xl font-bold mt-3">{`${user.firstName} ${user.lastName}`}</h2>
+                            <div className="total-time bg-gray-200 p-3 mt-3 rounded-lg text-center">
+                                <h3>Total Time:</h3>
+                                <span className="text-3xl font-bold">{cumulativePoseTime || 0}</span> s
+                            </div>
+                            <div className="best-times mt-5">
+                                <h3 className="text-center text-xl font-bold">Best Times for Each Pose</h3>
+                                <table className="min-w-full bg-white mt-3 border">
+                                    <thead>
+                                        <tr>
+                                            <th className="py-2 px-4 bg-gray-200 border">Pose</th>
+                                            <th className="py-2 px-4 bg-gray-200 border">Best Time (s)</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {poseList.map(pose => (
+                                            <tr key={pose} className="text-center">
+                                                <td className="border px-4 py-2">{pose}</td>
+                                                <td className="border px-4 py-2">{userBestTimes[pose]} s</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                    )}
                     {/* Leaderboard Section */}
                     <div className="leaderboard-section bg-[#A5B28F] p-5 rounded-lg shadow-lg ml-10 flex-grow">
                         <h1 className="text-2xl font-bold text-center mb-5">LEADERBOARD</h1>
