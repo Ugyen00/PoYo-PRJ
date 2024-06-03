@@ -6,10 +6,6 @@ const performanceSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    bestTime: {
-        type: Number,
-        required: true,
-    },
     Tree_best: {
         best_time: {
             type: String,
