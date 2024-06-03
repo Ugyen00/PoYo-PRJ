@@ -26,7 +26,7 @@ const Profile = () => {
 
             try {
                 // Fetch user profile data
-                const userProfileResponse = await axios.get(`http://localhost:80/api/user-profile/${clerkUserId}`);
+                const userProfileResponse = await axios.get(`https://poyo-prj-backend.onrender.com/api/user-profile/${clerkUserId}`);
                 console.log('User profile data:', userProfileResponse.data);
                 setBestPoseTime(userProfileResponse.data.user[`${selectedPose}_best`]);
                 setCumulativePoseTime(userProfileResponse.data.user.cumulativePoseTime);
@@ -48,7 +48,7 @@ const Profile = () => {
     useEffect(() => {
         const fetchLeaderboardData = async () => {
             try {
-                const response = await axios.get(`http://localhost:80/api/leaderboard?pose=${selectedPose}`);
+                const response = await axios.get(`https://poyo-prj-backend.onrender.com/api/leaderboard?pose=${selectedPose}`);
                 console.log('Leaderboard data:', response.data);
                 setLeaderboard(response.data.leaderboard);
             } catch (error) {
