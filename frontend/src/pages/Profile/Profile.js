@@ -3,8 +3,9 @@ import axios from 'axios';
 import NavBar from '../../components/NavBar';
 import Footer from '../../components/Footer';
 import { useUser } from '@clerk/clerk-react';
-import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
-
+import { UserButton } from '@clerk/clerk-react';
+import { Line } from 'react-chartjs-2';
+import { format } from 'date-fns';
 
 const poseList = [
     'Tree', 'Chair', 'Cobra', 'Warrior', 'Dog', 'Shoulderstand'
@@ -17,6 +18,7 @@ const Profile = () => {
     const [leaderboard, setLeaderboard] = useState([]);
     const [selectedPose, setSelectedPose] = useState(poseList[0]);
     const [userBestTimes, setUserBestTimes] = useState({});
+    const [bestTimesData, setBestTimesData] = useState([]);
 
     const sortedLeaderboard = [...leaderboard].sort((a, b) => b[`${selectedPose}_best`] - a[`${selectedPose}_best`]);
 
@@ -60,6 +62,48 @@ const Profile = () => {
 
         fetchLeaderboardData();
     }, [selectedPose]);
+
+    useEffect(() => {
+        const fetchBestTimesData = async () => {
+            if (!user) return;
+
+            const clerkUserId = user.id;
+
+            try {
+                const response = await axios.get(`http://localhost:80/api/best-times/${clerkUserId}`);
+                setBestTimesData(response.data.bestTimes);
+            } catch (error) {
+                console.error('Error fetching best times data:', error);
+            }
+        };
+
+        fetchBestTimesData();
+    }, [user]);
+
+    const graphData = {
+        labels: bestTimesData.map(entry => new Date(entry.date).toLocaleDateString()),
+        datasets: poseList.map(pose => ({
+            label: pose,
+            data: bestTimesData.filter(entry => entry.pose === pose).map(entry => entry.bestTime),
+            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            fill: true,
+        }))
+    };
+
+    const graphOptions = {
+        scales: {
+            x: {
+                type: 'time',
+                time: {
+                    unit: 'day'
+                }
+            },
+            y: {
+                beginAtZero: true
+            }
+        }
+    };
 
     return (
         <div>
@@ -146,6 +190,12 @@ const Profile = () => {
                             </tbody>
                         </table>
                     </div>
+                </div>
+
+                {/* Performance Graph Section */}
+                <div className="daily-performance bg-[#A5B28F] p-5 rounded-lg shadow-lg mt-10">
+                    <h1 className="text-2xl font-bold text-center mb-5">DAILY PERFORMANCE</h1>
+                    <Line data={graphData} options={graphOptions} />
                 </div>
             </div>
             <Footer />
