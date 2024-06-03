@@ -8,7 +8,8 @@ import DropDown from '../../components/DropDown/DropDown';
 import { POINTS, keypointConnections } from '../../utils/data';
 import { drawPoint, drawSegment } from '../../utils/helper';
 import Navbar from '../../components/NavBar';
-
+import axios from 'axios';
+import { useUser } from '@clerk/clerk-react';
 let skeletonColor = 'rgb(255,255,255)';
 let poseList = [
     'Tree', 'Chair', 'Cobra', 'Warrior', 'Dog',
@@ -173,11 +174,27 @@ function Yoga() {
         setIsStartPose(true);
         runMovenet();
     }
-
+    const { user } = useUser();
     function stopPose() {
         setIsStartPose(false);
         clearInterval(interval);
+    console.log(currentPose)
+        // Save the best performance time to the backend
+        const clerkUserId = user.id; // Get the user's Clerk ID
+        console.log(clerkUserId)
+        axios.post('http://localhost:80/api/update-best-time', {
+            clerkUserId,
+            bestPoseTime: bestPerform,
+            pose_name: currentPose
+        })
+            .then(response => {
+                console.log(response.data.message);
+            })
+            .catch(error => {
+                console.error('Error updating cumulative pose time:', error);
+            });
     }
+    
     const poseVideoUrls = {
         Tree: "https://www.youtube.com/embed/Fr5kiIygm0c?autoplay=1&loop=1&playlist=Fr5kiIygm0c&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3",
         Chair: "https://www.youtube.com/embed/tEZhXr0FuAQ?autoplay=1&loop=1&playlist=tEZhXr0FuAQ&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3",

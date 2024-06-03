@@ -4,48 +4,51 @@ import NavBar from '../../components/NavBar';
 import Footer from '../../components/Footer';
 import { useUser } from '@clerk/clerk-react';
 
+const poseList = [
+    'Tree', 'Chair', 'Cobra', 'Warrior', 'Dog', 'Shoulderstand'
+];
+
 const Profile = () => {
     const { user } = useUser();
     const [bestPoseTime, setBestPoseTime] = useState(null);
+    const [cumulativePoseTime, setCumulativePoseTime] = useState(null);
     const [leaderboard, setLeaderboard] = useState([]);
+    const [selectedPose, setSelectedPose] = useState(poseList[0]);
 
-    const sortedLeaderboard = [...leaderboard].sort((a, b) => b.bestPoseTime - a.bestPoseTime);
+    const sortedLeaderboard = [...leaderboard].sort((a, b) => b[`${selectedPose}_best`] - a[`${selectedPose}_best`]);
 
     useEffect(() => {
         if (!user) return;
 
         const clerkUserId = user.id;
 
-        // Fetch user profile data
-        axios.get(`http://localhost:80/api/user-profile/${clerkUserId}`)
-            .then(response => {
-                console.log('User profile data:', response.data);
-                setBestPoseTime(response.data.user.bestPoseTime);
-
-                // Fetch best pose time data
-                axios.get(`http://localhost:80/api/bests/${clerkUserId}`)
-                    .then(response => {
-                        console.log('Best pose time data:', response.data);
-                        setBestPoseTime(response.data.bestPoseTime);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching best pose time:', error);
-                    });
+        const fetchUserData = async () => {
+            try {
+                // Fetch user profile data
+                const userProfileResponse = await axios.get(`http://localhost:80/api/user-profile/${clerkUserId}`);
+                console.log('User profile data:', userProfileResponse.data);
+                setBestPoseTime(userProfileResponse.data.user[`${selectedPose}_best`]);
+                setCumulativePoseTime(userProfileResponse.data.user.cumulativePoseTime);
 
                 // Fetch leaderboard data
-                axios.get('http://localhost:80/api/leaderboard')
-                    .then(response => {
-                        console.log('Leaderboard data:', response.data);
-                        setLeaderboard(response.data.leaderboard);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching leaderboard data:', error);
-                    });
-            })
-            .catch(error => {
-                console.error('Error fetching user profile:', error);
-            });
-    }, [user]);
+                await fetchLeaderboardData(selectedPose);
+            } catch (error) {
+                console.error('Error fetching user profile or leaderboard:', error);
+            }
+        };
+
+        fetchUserData();
+    }, [user, selectedPose]);
+
+    const fetchLeaderboardData = async (pose) => {
+        try {
+            const response = await axios.get(`http://localhost:80/api/leaderboard?pose=${pose}`);
+            console.log('Leaderboard data:', response.data);
+            setLeaderboard(response.data.leaderboard);
+        } catch (error) {
+            console.error('Error fetching leaderboard data:', error);
+        }
+    };
 
     if (!user) {
         return <div>Loading...</div>;
@@ -54,6 +57,7 @@ const Profile = () => {
     return (
         <div>
             <NavBar />
+
             <div className='py-24'>
                 <img
                     src='/images/profile.svg'
@@ -77,12 +81,28 @@ const Profile = () => {
                     {/* Leaderboard Section */}
                     <div className="leaderboard-section bg-[#A5B28F] p-5 rounded-lg shadow-lg ml-10 flex-grow">
                         <h1 className="text-2xl font-bold text-center mb-5">LEADERBOARD</h1>
+                        
+                        {/* Pose Filter Dropdown */}
+                        <div className="mb-5">
+                            <label htmlFor="pose-select" className="block mb-2">Select Pose:</label>
+                            <select
+                                id="pose-select"
+                                value={selectedPose}
+                                onChange={(e) => setSelectedPose(e.target.value)}
+                                className="block w-full p-2 border rounded"
+                            >
+                                {poseList.map(pose => (
+                                    <option key={pose} value={pose}>{pose}</option>
+                                ))}
+                            </select>
+                        </div>
+                        
                         <table className="min-w-full bg-white">
                             <thead>
                                 <tr>
                                     <th className="py-2 px-4 bg-gray-200">Rank</th>
                                     <th className="py-2 px-4 bg-gray-200">Name</th>
-                                    <th className="py-2 px-4 bg-gray-200">Overall Best Time (s)</th>
+                                    <th className="py-2 px-4 bg-gray-200">Best Time ({selectedPose}) (s)</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -90,7 +110,7 @@ const Profile = () => {
                                     <tr key={entry.clerkUserId} className={`${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
                                         <td className="border px-4 py-2 text-center">{index + 1}</td>
                                         <td className="border px-4 py-2 text-center">{`${entry.userDetails.firstName} ${entry.userDetails.lastName}`}</td>
-                                        <td className="border px-4 py-2 text-center">{entry.bestPoseTime} Sec</td>
+                                        <td className="border px-4 py-2 text-center">{entry[`${selectedPose}_best`]} Sec</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -100,7 +120,6 @@ const Profile = () => {
             </div>
             <Footer />
         </div>
-
     );
 };
 
