@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import User from './userModel.js';
 import Best from './bestModel.js';
+import Performance from './performanceModel.js';
 
 dotenv.config();
 
