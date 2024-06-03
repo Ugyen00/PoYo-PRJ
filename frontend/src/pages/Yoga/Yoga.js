@@ -110,6 +110,7 @@ function Yoga() {
         }, 100);
     }
 
+    
     const detectPose = async (detector, poseClassifier, countAudio) => {
         const SHIFT_X_VALUE = 48; // Adjust this value to shift the landmarks left
         const SHIFT_Y_VALUE = 46; // Adjust this value to shift the landmarks up
