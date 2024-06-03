@@ -228,7 +228,7 @@ app.post('/api/update-performance', async (req, res) => {
     try {
         const existingPerformance = await Performance.findOne({
             clerkUserId: clerkUserId,
-            pose: pose,
+            // pose: pose,
             date: {
                 $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of the day
                 $lt: new Date(new Date().setHours(23, 59, 59, 999)) // End of the day
@@ -236,19 +236,25 @@ app.post('/api/update-performance', async (req, res) => {
         });
 
         if (existingPerformance) {
-            if (bestTime > existingPerformance.bestTime) {
-                existingPerformance.bestTime = bestTime;
-                await existingPerformance.save();
-                res.status(200).json({
-                    success: true,
-                    message: 'Best time updated for today',
-                });
+            if (existingPerformance.pose === pose) {
+                if (bestTime > existingPerformance.bestTime) {
+                    existingPerformance.bestTime = bestTime;
+                    await existingPerformance.save();
+                    return res.status(200).json({
+                        success: true,
+                        message: 'Best time updated for today',
+                    });
+                } else {
+                    return res.status(200).json({
+                        success: true,
+                        message: 'New best time is not greater than the current best time for today',
+                    });
+                }
             } else {
-                res.status(200).json({
-                    success: true,
-                    message: 'New best time is not greater than the current best time for today',
-                });
+                const updatedPerformance = await Performance.findOneAndUpdate({ clerkUserId: clerkUserId }, { $set: { pose: bestTime } }, { new: true })
+                return res.status(200).json({ success: true, message: "New pose type added" })
             }
+
         } else {
             const newPerformance = new Performance({
                 clerkUserId,
