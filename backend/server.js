@@ -116,6 +116,8 @@ app.post('/api/update-best-time', async (req, res) => {
         //         message: 'New best time created',
         //     });
         // }
+
+
         let updateObject = {};
         updateObject[`${pose_name}_best`] = bestPoseTime;
         updateObject['$inc'] = { cumulativePoseTime: bestPoseTime }
@@ -226,50 +228,81 @@ app.post('/api/update-performance', async (req, res) => {
     const { clerkUserId, pose, bestTime } = req.body;
 
     try {
-        const pose1 = `${pose}_best`
+        const bestTimeField = `${pose_name}_best.best_time`;
+        const dateField = `${pose_name}_best.date`;
+
+        // const pose1 = `${pose}_best`
         const existingPerformance = await Performance.findOne({
             clerkUserId: clerkUserId,
             // pose: pose,
-            pose1: {
+            [dateField]: {
                 date: {
                     $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of the day
                     $lt: new Date(new Date().setHours(23, 59, 59, 999)) // End of the day
                 }
             }
         });
-        const usersWithPose = await Performance.find({ pose1: { $exists: true } })
+
         if (existingPerformance) {
-            if (usersWithPose) {
-                if (bestTime > existingPerformance.pose1.best_time) {
-                    existingPerformance.pose1.best_time = bestTime;
-                    await existingPerformance.save();
-                    return res.status(200).json({
-                        success: true,
-                        message: 'Best time updated for today',
-                    });
-                } else {
-                    return res.status(200).json({
-                        success: true,
-                        message: 'New best time is not greater than the current best time for today',
-                    });
-                }
+            const currentBestTime = existingPerformance[pose_name + '_best'].best_time || 0;
+            if (bestTime > currentBestTime) {
+                existingPerformance[pose_name + '_best'].best_time = bestTime;
+                existingPerformance[pose_name + '_best'].date = new Date();
+                await existingPerformance.save()
+
+                res.status(200).json({
+                    success: true,
+                    message: "Best time updated for today"
+                })
             } else {
-                const updatedPerformance = await Performance.findOneAndUpdate({ clerkUserId: clerkUserId }, { $set: { pose: bestTime } }, { new: true })
-                return res.status(200).json({ success: true, message: "New pose type added" })
+                res.status(200).json({
+                    success: true,
+                    message: 'New best time is not greater than the current best time'
+                })
             }
+
+            // if (usersWithPose) {
+            //     if (bestTime > existingPerformance.pose1.best_time) {
+            //         existingPerformance.pose1.best_time = bestTime;
+            //         await existingPerformance.save();
+            //         return res.status(200).json({
+            //             success: true,
+            //             message: 'Best time updated for today',
+            //         });
+            //     } else {
+            //         return res.status(200).json({
+            //             success: true,
+            //             message: 'New best time is not greater than the current best time for today',
+            //         });
+            //     }
+            // } else {
+            //     const updatedPerformance = await Performance.findOneAndUpdate({ clerkUserId: clerkUserId }, { $set: { pose: bestTime } }, { new: true })
+            //     return res.status(200).json({ success: true, message: "New pose type added" })
+            // }
         } else {
-            const newPerformance = new Performance({
-                clerkUserId,
-                pose1: {
-                    best_time: bestTime,
-                    date: new Date()
-                }
-            })
-            await newPerformance.save();
-            res.status(200).json({
-                success: true,
-                message: 'New performance record created for today',
-            });
+            // const newPerformance = new Performance({
+            //     clerkUserId,
+            //     pose1: {
+            //         best_time: bestTime,
+            //         date: new Date()
+            //     }
+            // })
+            // await newPerformance.save();
+            // res.status(200).json({
+            //     success: true,
+            //     message: 'New performance record created for today',
+            // });
+            // const usersWithPose = await Performance.find({ [pose_name +'_best']: { $exists: true } })
+            // if(usersWithPose){
+            //     await Performance.findOneAndUpdate({clerkUserId:clerkUserId},{})
+            // }
+            let updateObject = {
+                clerkUserId: clerkUserId,
+                [bestTimeField]: bestTime,
+                [dateField]: new Date
+            }
+            const updatedPerformance = await Performance.findOneAndUpdate({ clerkUserId: clerkUserId }, updateObject, { new: true, upsert: true })
+            res.status(200).json({ success: true, message: "New best time created for today" })
         }
     } catch (err) {
         console.error('Error updating performance:', err);
