@@ -18,7 +18,7 @@ mongoose
         });
     })
     .catch((err) => {
-        console.log("error from catch", err)
+        console.log(err.message)
     });
 
 const app = express();
@@ -77,33 +77,6 @@ app.post('/api/webhooks', async (req, res) => {
     }
 });
 
-// Endpoint to update user's best pose time
-// app.post('/api/update-best-time', async (req, res) => {
-//     const { clerkUserId, bestPoseTime } = req.body;
-
-//     try {
-//         const best = await Best.findOneAndUpdate(
-//             { clerkUserId: clerkUserId },
-//             { bestPoseTime: bestPoseTime },
-//             { new: true, upsert: true }
-//         );
-
-//         res.status(200).json({
-//             success: true,
-//             message: 'Best pose time updated',
-//             best,
-//         });
-//     } catch (err) {
-//         res.status(500).json({
-//             success: false,
-//             message: err.message,
-//         });
-//     }
-// });
-
-// Endpoint to update user's best pose time
-// Endpoint to update user's cumulative pose time
-
 app.post('/api/update-best-time', async (req, res) => {
     const { clerkUserId, bestPoseTime, pose_name } = req.body;
 
@@ -127,8 +100,6 @@ app.post('/api/update-best-time', async (req, res) => {
     }
 });
 
-
-
 // Endpoint to get user's profile data
 app.get('/api/user-profile/:userId', async (req, res) => {
     const { userId } = req.params;
@@ -137,9 +108,13 @@ app.get('/api/user-profile/:userId', async (req, res) => {
         const user = await User.findOne({ clerkUserId: userId });
         console.log(user);
         if (user) {
+            const best = await Best.findOne({ clerkUserId: userId });
             res.status(200).json({
                 success: true,
-                user,
+                user: {
+                    ...user.toObject(),
+                    ...best.toObject(),
+                },
             });
         } else {
             res.status(404).json({
@@ -156,35 +131,9 @@ app.get('/api/user-profile/:userId', async (req, res) => {
     }
 });
 
-// Endpoint to get user's best pose times
-app.get('/api/bests/:userId', async (req, res) => {
-    const { userId } = req.params;
-
-    try {
-        const best = await Best.findOne({ clerkUserId: userId });
-        console.log(best)
-        if (best) {
-            res.status(200).json({
-                success: true,
-                bestPoseTime: best.bestPoseTime,
-            });
-        } else {
-            res.status(404).json({
-                success: false,
-                message: 'Best pose time not found',
-            });
-        }
-    } catch (err) {
-        res.status(500).json({
-            success: false,
-            message: err.message,
-        });
-    }
-});
-
-
 // Endpoint to get leaderboard data
 app.get('/api/leaderboard', async (req, res) => {
+    const { pose } = req.query;
     try {
         const leaderboard = await Best.aggregate([
             {
@@ -199,13 +148,13 @@ app.get('/api/leaderboard', async (req, res) => {
                 $unwind: '$userDetails'
             },
             {
-                $sort: { bestPoseTime: 1 }
+                $sort: { [`${pose}_best`]: -1 }
             },
             {
                 $project: {
                     _id: 0,
                     clerkUserId: 1,
-                    bestPoseTime: 1,
+                    [`${pose}_best`]: 1,
                     'userDetails.firstName': 1,
                     'userDetails.lastName': 1
                 }
@@ -225,5 +174,3 @@ app.get('/api/leaderboard', async (req, res) => {
 });
 
 const port = process.env.PORT || 80;
-
-
