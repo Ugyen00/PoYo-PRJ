@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 
-const performanceSchema = new mongoose.Schema({
+const bestSchema = new mongoose.Schema({
     clerkUserId: { type: String, required: true },
     pose: { type: String, required: true },
     bestTime: { type: Number, required: true },
-    date: { type: Date, required: true }
+    date: { type: Date, default: Date.now }
 });
 
-const Performance = mongoose.model('Performance', performanceSchema);
+const Best = mongoose.model('Best', bestSchema);
 
-export default Performance;
+export default Best;
