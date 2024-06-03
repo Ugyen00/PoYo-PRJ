@@ -133,6 +133,7 @@ app.post('/api/update-best-time', async (req, res) => {
     }
 });
 
+
 // Endpoint to get user's profile data
 app.get('/api/user-profile/:userId', async (req, res) => {
     const { userId } = req.params;
