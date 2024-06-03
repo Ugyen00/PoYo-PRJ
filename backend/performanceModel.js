@@ -6,10 +6,6 @@ const performanceSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    pose: {
-        type: String,
-        required: true,
-    },
     bestTime: {
         type: Number,
         required: true,
@@ -73,10 +69,6 @@ const performanceSchema = new mongoose.Schema({
             type: Date,
             required: false,
         }
-    },
-    date: {
-        type: Date,
-        required: true,
     },
 });
 
