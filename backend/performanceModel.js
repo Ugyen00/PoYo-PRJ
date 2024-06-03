@@ -1,12 +1,25 @@
+// performanceModel.js
 import mongoose from 'mongoose';
 
-const bestSchema = new mongoose.Schema({
-    clerkUserId: { type: String, required: true },
-    pose: { type: String, required: true },
-    bestTime: { type: Number, required: true },
-    date: { type: Date, default: Date.now }
+const performanceSchema = new mongoose.Schema({
+    clerkUserId: {
+        type: String,
+        required: true,
+    },
+    pose: {
+        type: String,
+        required: true,
+    },
+    bestTime: {
+        type: Number,
+        required: true,
+    },
+    date: {
+        type: Date,
+        required: true,
+    },
 });
 
-const Best = mongoose.model('Best', bestSchema);
+const Performance = mongoose.model('Performance', performanceSchema);
 
-export default Best;
+export default Performance;

@@ -5,12 +5,12 @@ import { Webhook } from 'svix';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import User from './userModel.js';
-import Best from './bestModel.js'; // Import Best model
+import Best from './bestModel.js';
 
 dotenv.config();
 
 mongoose
-    .connect(process.env.MONGODB_URL)
+    .connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log('Connected to DB');
         app.listen(port, () => {
@@ -18,7 +18,7 @@ mongoose
         });
     })
     .catch((err) => {
-        console.log(err.message)
+        console.log(err.message);
     });
 
 const app = express();
@@ -26,7 +26,6 @@ const app = express();
 app.use(cors({
     origin: 'http://localhost:3000'
 }));
-
 
 app.use(bodyParser.json({
     verify: (req, res, buf) => {
@@ -142,7 +141,6 @@ app.get('/api/best-times/:userId', async (req, res) => {
     }
 });
 
-
 // Endpoint to get user's profile data
 app.get('/api/user-profile/:userId', async (req, res) => {
     const { userId } = req.params;
@@ -166,7 +164,7 @@ app.get('/api/user-profile/:userId', async (req, res) => {
             });
         }
     } catch (err) {
-        console.log(err)
+        console.log(err);
         res.status(500).json({
             success: false,
             message: err.message,
@@ -209,6 +207,56 @@ app.get('/api/leaderboard', async (req, res) => {
             leaderboard,
         });
     } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+});
+
+
+app.post('/api/update-performance', async (req, res) => {
+    const { clerkUserId, pose, bestTime } = req.body;
+
+    try {
+        const existingPerformance = await Performance.findOne({
+            clerkUserId: clerkUserId,
+            pose: pose,
+            date: {
+                $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of the day
+                $lt: new Date(new Date().setHours(23, 59, 59, 999)) // End of the day
+            }
+        });
+
+        if (existingPerformance) {
+            if (bestTime > existingPerformance.bestTime) {
+                existingPerformance.bestTime = bestTime;
+                await existingPerformance.save();
+                res.status(200).json({
+                    success: true,
+                    message: 'Best time updated for today',
+                });
+            } else {
+                res.status(200).json({
+                    success: true,
+                    message: 'New best time is not greater than the current best time for today',
+                });
+            }
+        } else {
+            const newPerformance = new Performance({
+                clerkUserId,
+                pose,
+                bestTime,
+                date: new Date(),
+            });
+            await newPerformance.save();
+            res.status(200).json({
+                success: true,
+                message: 'New performance record created for today',
+            });
+        }
+    } catch (err) {
+        console.error('Error updating performance:', err);
         res.status(500).json({
             success: false,
             message: err.message,
