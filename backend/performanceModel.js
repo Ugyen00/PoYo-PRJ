@@ -14,6 +14,66 @@ const performanceSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    Tree_best: {
+        best_time: {
+            type: String,
+            required: false
+        },
+        date: {
+            type: Date,
+            required: false,
+        }
+    },
+    Chair_best: {
+        best_time: {
+            type: String,
+            required: false
+        },
+        date: {
+            type: Date,
+            required: false,
+        }
+    },
+    Cobra_best: {
+        best_time: {
+            type: String,
+            required: false
+        },
+        date: {
+            type: Date,
+            required: false,
+        }
+    },
+    Warrior_best: {
+        best_time: {
+            type: String,
+            required: false
+        },
+        date: {
+            type: Date,
+            required: false,
+        }
+    },
+    Dog_best: {
+        best_time: {
+            type: String,
+            required: false
+        },
+        date: {
+            type: Date,
+            required: false,
+        }
+    },
+    Shoulderstand_best: {
+        best_time: {
+            type: String,
+            required: false
+        },
+        date: {
+            type: Date,
+            required: false,
+        }
+    },
     date: {
         type: Date,
         required: true,

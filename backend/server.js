@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { Webhook } from 'svix';
 import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import User from './userModel.js';
 import Best from './bestModel.js';
 import Performance from './performanceModel.js';
@@ -226,19 +226,22 @@ app.post('/api/update-performance', async (req, res) => {
     const { clerkUserId, pose, bestTime } = req.body;
 
     try {
+        const pose1 = `${pose}_best`
         const existingPerformance = await Performance.findOne({
             clerkUserId: clerkUserId,
             // pose: pose,
-            date: {
-                $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of the day
-                $lt: new Date(new Date().setHours(23, 59, 59, 999)) // End of the day
+            pose1: {
+                date: {
+                    $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of the day
+                    $lt: new Date(new Date().setHours(23, 59, 59, 999)) // End of the day
+                }
             }
         });
-
+        const usersWithPose = await Performance.find({ pose1: { $exists: true } })
         if (existingPerformance) {
-            if (existingPerformance.pose === pose) {
-                if (bestTime > existingPerformance.bestTime) {
-                    existingPerformance.bestTime = bestTime;
+            if (usersWithPose) {
+                if (bestTime > existingPerformance.pose1.best_time) {
+                    existingPerformance.pose1.best_time = bestTime;
                     await existingPerformance.save();
                     return res.status(200).json({
                         success: true,
@@ -254,14 +257,14 @@ app.post('/api/update-performance', async (req, res) => {
                 const updatedPerformance = await Performance.findOneAndUpdate({ clerkUserId: clerkUserId }, { $set: { pose: bestTime } }, { new: true })
                 return res.status(200).json({ success: true, message: "New pose type added" })
             }
-
         } else {
             const newPerformance = new Performance({
                 clerkUserId,
-                pose,
-                bestTime,
-                date: new Date(),
-            });
+                pose1: {
+                    best_time: bestTime,
+                    date: new Date()
+                }
+            })
             await newPerformance.save();
             res.status(200).json({
                 success: true,
@@ -276,5 +279,33 @@ app.post('/api/update-performance', async (req, res) => {
         });
     }
 });
+
+app.get('/api/get-performance/:clerkid', async (req, res) => {
+    try {
+        const clearkid = req.params.clerkid
+        const allPerformance = await Performance.findOne({ clerkUserId: clearkid })
+
+        if (allPerformance != null) {
+            res.status(200).json({
+                success: true,
+                allPerformance: allPerformance
+            })
+        }
+        else {
+            res.status(403).json({
+                success: false,
+                message: 'Not found at all'
+            })
+        }
+
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        })
+    }
+}
+)
 
 const port = process.env.PORT || 80;
