@@ -14,6 +14,7 @@ const Profile = () => {
     const [cumulativePoseTime, setCumulativePoseTime] = useState(null);
     const [leaderboard, setLeaderboard] = useState([]);
     const [selectedPose, setSelectedPose] = useState(poseList[0]);
+    const [userBestTimes, setUserBestTimes] = useState({});
 
     const sortedLeaderboard = [...leaderboard].sort((a, b) => b[`${selectedPose}_best`] - a[`${selectedPose}_best`]);
 
@@ -29,6 +30,13 @@ const Profile = () => {
                 console.log('User profile data:', userProfileResponse.data);
                 setBestPoseTime(userProfileResponse.data.user[`${selectedPose}_best`]);
                 setCumulativePoseTime(userProfileResponse.data.user.cumulativePoseTime);
+
+                const bestTimes = poseList.reduce((acc, pose) => {
+                    acc[pose] = userProfileResponse.data.user[`${pose}_best`] || 0;
+                    return acc;
+                }, {});
+
+                setUserBestTimes(bestTimes);
 
                 // Fetch leaderboard data
                 await fetchLeaderboardData(selectedPose);
@@ -75,13 +83,32 @@ const Profile = () => {
                         <h2 className="text-center text-xl font-bold mt-3">{`${user.firstName} ${user.lastName}`}</h2>
                         <div className="total-time bg-gray-200 p-3 mt-3 rounded-lg text-center">
                             <h3>Total Time:</h3>
-                            <span className="text-3xl font-bold">{bestPoseTime || 0}</span> s
+                            <span className="text-3xl font-bold">{cumulativePoseTime || 0}</span> s
+                        </div>
+                        <div className="best-times mt-5">
+                            <h3 className="text-center text-xl font-bold">Best Times for Each Pose</h3>
+                            <table className="min-w-full bg-white mt-3 border">
+                                <thead>
+                                    <tr>
+                                        <th className="py-2 px-4 bg-gray-200 border">Pose</th>
+                                        <th className="py-2 px-4 bg-gray-200 border">Best Time (s)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {poseList.map(pose => (
+                                        <tr key={pose} className="text-center">
+                                            <td className="border px-4 py-2">{pose}</td>
+                                            <td className="border px-4 py-2">{userBestTimes[pose]} s</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     {/* Leaderboard Section */}
                     <div className="leaderboard-section bg-[#A5B28F] p-5 rounded-lg shadow-lg ml-10 flex-grow">
                         <h1 className="text-2xl font-bold text-center mb-5">LEADERBOARD</h1>
-                        
+
                         {/* Pose Filter Dropdown */}
                         <div className="mb-5">
                             <label htmlFor="pose-select" className="block mb-2">Select Pose:</label>
@@ -96,7 +123,7 @@ const Profile = () => {
                                 ))}
                             </select>
                         </div>
-                        
+
                         <table className="min-w-full bg-white">
                             <thead>
                                 <tr>

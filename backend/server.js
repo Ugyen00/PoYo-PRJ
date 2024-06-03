@@ -14,10 +14,12 @@ mongoose
     .then(() => {
         console.log('Connected to DB');
         app.listen(port, () => {
-    console.log(`Server is listening at http://localhost:${port}`);
-});
+            console.log(`Server is listening at http://localhost:${port}`);
+        });
     })
-    .catch((err) => console.log(err.message));
+    .catch((err) => {
+        console.log("error from catch", err)
+    });
 
 const app = express();
 
@@ -101,15 +103,16 @@ app.post('/api/webhooks', async (req, res) => {
 
 // Endpoint to update user's best pose time
 // Endpoint to update user's cumulative pose time
+
 app.post('/api/update-best-time', async (req, res) => {
-    const { clerkUserId, bestPoseTime,pose_name} = req.body;
+    const { clerkUserId, bestPoseTime, pose_name } = req.body;
 
     try {
         // const existingBest = await Best.findOne({ clerkUserId: clerkUserId });
         let updateObject = {};
         updateObject[`${pose_name}_best`] = bestPoseTime;
-        updateObject['$inc'] = {cumulativePoseTime:bestPoseTime}
-        const updatedBest = await Best.findOneAndUpdate({clerkUserId:clerkUserId},updateObject,{new:true,upsert:true})
+        updateObject['$inc'] = { cumulativePoseTime: bestPoseTime }
+        const updatedBest = await Best.findOneAndUpdate({ clerkUserId: clerkUserId }, updateObject, { new: true, upsert: true })
         console.log(updatedBest)
         res.status(200).json({
             success: true,
@@ -129,7 +132,7 @@ app.post('/api/update-best-time', async (req, res) => {
 // Endpoint to get user's profile data
 app.get('/api/user-profile/:userId', async (req, res) => {
     const { userId } = req.params;
-        console.log(userId);
+    console.log(userId);
     try {
         const user = await User.findOne({ clerkUserId: userId });
         console.log(user);
@@ -159,7 +162,7 @@ app.get('/api/bests/:userId', async (req, res) => {
 
     try {
         const best = await Best.findOne({ clerkUserId: userId });
-            console.log(best)
+        console.log(best)
         if (best) {
             res.status(200).json({
                 success: true,
