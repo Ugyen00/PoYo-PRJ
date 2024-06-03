@@ -113,7 +113,7 @@ function Yoga() {
     const detectPose = async (detector, poseClassifier, countAudio) => {
         const SHIFT_X_VALUE = 48; // Adjust this value to shift the landmarks left
         const SHIFT_Y_VALUE = 46; // Adjust this value to shift the landmarks up
-    
+
         if (
             typeof webcamRef.current !== "undefined" &&
             webcamRef.current !== null &&
@@ -154,7 +154,7 @@ function Yoga() {
                 }
                 const processedInput = landmarks_to_embedding(input);
                 const classification = poseClassifier.predict(processedInput);
-    
+
                 classification.array().then((data) => {
                     const classNo = CLASS_NO[currentPose];
                     console.log(data[0][classNo]);
@@ -178,7 +178,7 @@ function Yoga() {
             }
         }
     }
-    
+
 
     function startYoga() {
         setIsStartPose(true);
@@ -192,16 +192,26 @@ function Yoga() {
         // Save the best performance time to the backend
         const clerkUserId = user.id; // Get the user's Clerk ID
         console.log(clerkUserId)
-        axios.post('https://poyo-prj-backend.onrender.com/api/update-best-time', {
+        // axios.post('https://poyo-prj-backend.onrender.com/api/update-best-time', {
+        //     clerkUserId,
+        //     bestPoseTime: bestPerform,
+        //     pose_name: currentPose
+        // })
+        //     .then(response => {
+        //         console.log(response.data.message);
+        //     })
+        //     .catch(error => {
+        //         console.error('Error updating cumulative pose time:', error);
+        //     });
+        axios.post('http://poyo-prj-backend.onrender.com/api/update-performance', {
             clerkUserId,
-            bestPoseTime: bestPerform,
-            pose_name: currentPose
+            bestTime: bestPerform,
+            pose: currentPose
+        }).then(response => {
+            console.log(response.data.message);
         })
-            .then(response => {
-                console.log(response.data.message);
-            })
             .catch(error => {
-                console.error('Error updating cumulative pose time:', error);
+                console.error('Error updating performance:', error);
             });
     }
 

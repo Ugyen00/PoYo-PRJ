@@ -1,11 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import NavBar from '../../components/NavBar';
 import Footer from '../../components/Footer';
 import { useUser } from '@clerk/clerk-react';
 import { UserButton } from '@clerk/clerk-react';
 import { Line } from 'react-chartjs-2';
-import { format } from 'date-fns';
+import { format, parseISO, isValid } from 'date-fns';
+import { Chart, registerables } from 'chart.js';
+import 'chartjs-adapter-date-fns';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+Chart.register(...registerables);
 
 const poseList = [
     'Tree', 'Chair', 'Cobra', 'Warrior', 'Dog', 'Shoulderstand'
@@ -19,6 +25,9 @@ const Profile = () => {
     const [selectedPose, setSelectedPose] = useState(poseList[0]);
     const [userBestTimes, setUserBestTimes] = useState({});
     const [bestTimesData, setBestTimesData] = useState([]);
+    const chartRef = useRef(null);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
     const sortedLeaderboard = [...leaderboard].sort((a, b) => b[`${selectedPose}_best`] - a[`${selectedPose}_best`]);
 
@@ -29,7 +38,6 @@ const Profile = () => {
             const clerkUserId = user.id;
 
             try {
-                // Fetch user profile data
                 const userProfileResponse = await axios.get(`http://localhost:80/api/user-profile/${clerkUserId}`);
                 console.log('User profile data:', userProfileResponse.data);
                 setBestPoseTime(userProfileResponse.data.user[`${selectedPose}_best`]);
@@ -80,30 +88,74 @@ const Profile = () => {
         fetchBestTimesData();
     }, [user]);
 
-    const graphData = {
-        labels: bestTimesData.map(entry => new Date(entry.date).toLocaleDateString()),
-        datasets: poseList.map(pose => ({
-            label: pose,
-            data: bestTimesData.filter(entry => entry.pose === pose).map(entry => entry.bestTime),
-            borderColor: 'rgba(75, 192, 192, 1)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            fill: true,
-        }))
-    };
-
-    const graphOptions = {
-        scales: {
-            x: {
-                type: 'time',
-                time: {
-                    unit: 'day'
+    useEffect(() => {
+        const renderChart = () => {
+            const ctx = document.getElementById('performance-chart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: bestTimesData
+                        .filter(entry => {
+                            const date = entry.date ? parseISO(entry.date) : null;
+                            return date && isValid(date) &&
+                                (!startDate || date >= startDate) &&
+                                (!endDate || date <= endDate);
+                        })
+                        .map(entry => {
+                            const date = entry.date ? parseISO(entry.date) : null;
+                            return date && isValid(date) ? format(date, 'MM/dd/yyyy') : 'Invalid Date';
+                        }),
+                    datasets: poseList.map(pose => ({
+                        label: pose,
+                        data: bestTimesData
+                            .filter(entry => entry.pose === pose && entry.date && isValid(parseISO(entry.date)) &&
+                                (!startDate || parseISO(entry.date) >= startDate) &&
+                                (!endDate || parseISO(entry.date) <= endDate))
+                            .map(entry => entry.bestTime),
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                    }))
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                tooltipFormat: 'll'
+                            },
+                            ticks: {
+                                maxTicksLimit: 7
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    }
                 }
-            },
-            y: {
-                beginAtZero: true
-            }
+            });
+
+            chartRef.current = chart;
+        };
+
+        if (chartRef.current) {
+            chartRef.current.destroy();
         }
-    };
+
+        if (bestTimesData.length) {
+            renderChart();
+        }
+    }, [bestTimesData, selectedPose, startDate, endDate]);
 
     return (
         <div>
@@ -118,7 +170,6 @@ const Profile = () => {
                     alt='Yoga Class'
                 />
                 <div className="container mx-auto py-20 px-56 flex">
-                    {/* Profile Section */}
                     {user && (
                         <div className="profile-section bg-[#A5B28F] p-5 rounded-lg shadow-lg">
                             <div className="profile-image text-center">
@@ -152,11 +203,8 @@ const Profile = () => {
                             </div>
                         </div>
                     )}
-                    {/* Leaderboard Section */}
                     <div className="leaderboard-section bg-[#A5B28F] p-5 rounded-lg shadow-lg ml-10 flex-grow">
                         <h1 className="text-2xl font-bold text-center mb-5">LEADERBOARD</h1>
-
-                        {/* Pose Filter Dropdown */}
                         <div className="mb-5">
                             <label htmlFor="pose-select" className="block mb-2">Select Pose:</label>
                             <select
@@ -181,23 +229,50 @@ const Profile = () => {
                             </thead>
                             <tbody>
                                 {sortedLeaderboard.map((entry, index) => (
-                                    <tr key={entry.clerkUserId} className={`${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
-                                        <td className="border px-4 py-2 text-center">{index + 1}</td>
-                                        <td className="border px-4 py-2 text-center">{`${entry.userDetails.firstName} ${entry.userDetails.lastName}`}</td>
-                                        <td className="border px-4 py-2 text-center">{entry[`${selectedPose}_best`]} Sec</td>
+                                    <tr key={entry.userId} className="text-center">
+                                        <td className="border px-4 py-2">{index + 1}</td>
+                                        <td className="border px-4 py-2">{entry.username}</td>
+                                        <td className="border px-4 py-2">{entry[`${selectedPose}_best`]}</td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
                 </div>
+            </div>
 
-                {/* Performance Graph Section */}
-                <div className="daily-performance bg-[#A5B28F] p-5 rounded-lg shadow-lg mt-10">
+            <div className="container mx-auto py-10">
+                <div className="calendar-section bg-white p-5 rounded-lg shadow-lg mx-20 mt-10">
                     <h1 className="text-2xl font-bold text-center mb-5">DAILY PERFORMANCE</h1>
-                    <Line data={graphData} options={graphOptions} />
+                    <div className="flex justify-center items-center mb-5">
+                        <div className="mr-2">
+                            <DatePicker
+                                selected={startDate}
+                                onChange={date => setStartDate(date)}
+                                selectsStart
+                                startDate={startDate}
+                                endDate={endDate}
+                                placeholderText="Start Date"
+                                className="p-2 border rounded"
+                            />
+                        </div>
+                        <div>
+                            <DatePicker
+                                selected={endDate}
+                                onChange={date => setEndDate(date)}
+                                selectsEnd
+                                startDate={startDate}
+                                endDate={endDate}
+                                minDate={startDate}
+                                placeholderText="End Date"
+                                className="p-2 border rounded"
+                            />
+                        </div>
+                    </div>
+                    <canvas id="performance-chart"></canvas>
                 </div>
             </div>
+
             <Footer />
         </div>
     );
