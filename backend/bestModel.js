@@ -25,6 +25,32 @@ const bestSchema = new mongoose.Schema({
         required: true,
         default: 0,
     },
+
+    Tree_best:{
+        type: String,
+        required: false
+    },
+    Chair_best:{
+        type: String,
+        required: false
+    },
+    Cobra_best:{
+        type: String,
+        required: false
+    },
+    Warrior_best:{
+        type: String,
+        required: false
+    },
+    Dog_best:{
+        type: String,
+        required: false
+    },
+    Shoulderstand_best:{
+        type: String,
+        required: false
+    }
+    
 });
 
 const Best = mongoose.model('Best', bestSchema);
