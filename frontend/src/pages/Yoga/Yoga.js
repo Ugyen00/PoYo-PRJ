@@ -182,7 +182,7 @@ function Yoga() {
         // Save the best performance time to the backend
         const clerkUserId = user.id; // Get the user's Clerk ID
         console.log(clerkUserId)
-        axios.post('http://localhost:80/api/update-best-time', {
+        axios.post('https://poyo-prj-backend.onrender.com/api/update-best-time', {
             clerkUserId,
             bestPoseTime: bestPerform,
             pose_name: currentPose
