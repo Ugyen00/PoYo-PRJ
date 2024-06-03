@@ -10,6 +10,9 @@ import { drawPoint, drawSegment } from '../../utils/helper';
 import Navbar from '../../components/NavBar';
 import axios from 'axios';
 import { useUser } from '@clerk/clerk-react';
+
+import './Yoga.css'
+
 let skeletonColor = 'rgb(255,255,255)';
 let poseList = [
     'Tree', 'Chair', 'Cobra', 'Warrior', 'Dog',
@@ -57,18 +60,18 @@ function Yoga() {
         Warrior: 7,
     };
 
-    async function get_center_point(landmarks, left_bodypart, right_bodypart) {
+    function get_center_point(landmarks, left_bodypart, right_bodypart) {
         let left = tf.gather(landmarks, left_bodypart, 1);
         let right = tf.gather(landmarks, right_bodypart, 1);
         const center = tf.add(tf.mul(left, 0.5), tf.mul(right, 0.5));
         return center;
     }
 
-    async function get_pose_size(landmarks, torso_size_multiplier = 2.5) {
-        let hips_center = await get_center_point(landmarks, POINTS.LEFT_HIP, POINTS.RIGHT_HIP);
-        let shoulders_center = await get_center_point(landmarks, POINTS.LEFT_SHOULDER, POINTS.RIGHT_SHOULDER);
+    function get_pose_size(landmarks, torso_size_multiplier = 2.5) {
+        let hips_center = get_center_point(landmarks, POINTS.LEFT_HIP, POINTS.RIGHT_HIP);
+        let shoulders_center = get_center_point(landmarks, POINTS.LEFT_SHOULDER, POINTS.RIGHT_SHOULDER);
         let torso_size = tf.norm(tf.sub(shoulders_center, hips_center));
-        let pose_center_new = await get_center_point(landmarks, POINTS.LEFT_HIP, POINTS.RIGHT_HIP);
+        let pose_center_new = get_center_point(landmarks, POINTS.LEFT_HIP, POINTS.RIGHT_HIP);
         pose_center_new = tf.expandDims(pose_center_new, 1);
         pose_center_new = tf.broadcastTo(pose_center_new, [1, 17, 2]);
         let d = tf.gather(tf.sub(landmarks, pose_center_new), 0, 0);
@@ -77,18 +80,19 @@ function Yoga() {
         return pose_size;
     }
 
-    async function normalize_pose_landmarks(landmarks) {
-        let pose_center = await get_center_point(landmarks, POINTS.LEFT_HIP, POINTS.RIGHT_HIP);
+    function normalize_pose_landmarks(landmarks) {
+        let pose_center = get_center_point(landmarks, POINTS.LEFT_HIP, POINTS.RIGHT_HIP);
         pose_center = tf.expandDims(pose_center, 1);
         pose_center = tf.broadcastTo(pose_center, [1, 17, 2]);
         landmarks = tf.sub(landmarks, pose_center);
-        let pose_size = await get_pose_size(landmarks);
+
+        let pose_size = get_pose_size(landmarks);
         landmarks = tf.div(landmarks, pose_size);
         return landmarks;
     }
 
-    async function landmarks_to_embedding(landmarks) {
-        landmarks = await normalize_pose_landmarks(tf.expandDims(landmarks, 0));
+    function landmarks_to_embedding(landmarks) {
+        landmarks = normalize_pose_landmarks(tf.expandDims(landmarks, 0));
         let embedding = tf.reshape(landmarks, [1, 34]);
         return embedding;
     }
@@ -107,6 +111,9 @@ function Yoga() {
     }
 
     const detectPose = async (detector, poseClassifier, countAudio) => {
+        const SHIFT_X_VALUE = 48; // Adjust this value to shift the landmarks left
+        const SHIFT_Y_VALUE = 46; // Adjust this value to shift the landmarks up
+    
         if (
             typeof webcamRef.current !== "undefined" &&
             webcamRef.current !== null &&
@@ -122,14 +129,16 @@ function Yoga() {
                 let input = keypoints.map((keypoint) => {
                     if (keypoint.score > 0.4) {
                         if (!(keypoint.name === 'left_eye' || keypoint.name === 'right_eye')) {
-                            drawPoint(ctx, keypoint.x, keypoint.y, 8, 'rgb(255,255,255)');
+                            const adjustedX = keypoint.x - SHIFT_X_VALUE;
+                            const adjustedY = keypoint.y - SHIFT_Y_VALUE;
+                            drawPoint(ctx, adjustedX, adjustedY, 8, 'rgb(255,255,255)');
                             let connections = keypointConnections[keypoint.name];
                             try {
                                 connections.forEach((connection) => {
                                     let conName = connection.toUpperCase();
-                                    drawSegment(ctx, [keypoint.x, keypoint.y],
-                                        [keypoints[POINTS[conName]].x,
-                                        keypoints[POINTS[conName]].y],
+                                    drawSegment(ctx, [adjustedX, adjustedY],
+                                        [keypoints[POINTS[conName]].x - SHIFT_X_VALUE,
+                                        keypoints[POINTS[conName]].y - SHIFT_Y_VALUE],
                                         skeletonColor);
                                 });
                             } catch (err) { }
@@ -137,15 +146,15 @@ function Yoga() {
                     } else {
                         notDetected += 1;
                     }
-                    return [keypoint.x, keypoint.y];
+                    return [keypoint.x - SHIFT_X_VALUE, keypoint.y - SHIFT_Y_VALUE];
                 });
                 if (notDetected > 4) {
                     skeletonColor = 'rgb(255,255,255)';
                     return;
                 }
-                const processedInput = await landmarks_to_embedding(input);
+                const processedInput = landmarks_to_embedding(input);
                 const classification = poseClassifier.predict(processedInput);
-
+    
                 classification.array().then((data) => {
                     const classNo = CLASS_NO[currentPose];
                     console.log(data[0][classNo]);
@@ -169,6 +178,7 @@ function Yoga() {
             }
         }
     }
+    
 
     function startYoga() {
         setIsStartPose(true);
@@ -221,15 +231,17 @@ function Yoga() {
                             height='380px'
                             id="webcam"
                             ref={webcamRef}
-                            className="absolute right-12 top-42 border-2 border-green-500"
+                            className="border-2 border-green-500"
                         />
+
                         <canvas
                             ref={canvasRef}
                             id="my-canvas"
                             width='540px'
                             height='380px'
-                            className="absolute right-12 top-42 z-10"
+                            className="absolute"
                         />
+
                         <div>
                             <iframe
                                 width="450"
