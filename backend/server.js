@@ -225,7 +225,7 @@ app.get('/api/leaderboard', async (req, res) => {
 
 
 app.post('/api/update-performance', async (req, res) => {
-    const { clerkUserId, pose, bestTime } = req.body;
+    const { clerkUserId, pose_name, bestTime } = req.body;
 
     try {
         const bestTimeField = `${pose_name}_best.best_time`;
