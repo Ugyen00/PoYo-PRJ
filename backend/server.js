@@ -223,6 +223,89 @@ app.get('/api/leaderboard', async (req, res) => {
     }
 });
 
+// app.post('/api/update-performance', async (req, res) => {
+//     const { clerkUserId, pose_name, bestTime } = req.body;
+
+//     try {
+//         const bestTimeField = `${pose_name}_best.best_time`;
+//         const dateField = `${pose_name}_best.date`;
+
+//         // const pose1 = `${pose}_best`
+//         const today = new Date()
+//         const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+//         const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+//         const existingPerformance = await Performance.findOne({
+//             clerkUserId: clerkUserId,
+//             // pose: pose,
+//             [dateField]: {
+//                 $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of the day
+//                 $lt: new Date(new Date().setHours(23, 59, 59, 999)) // End of the day
+
+//             }
+//         });
+
+//         if (existingPerformance) {
+//             const currentBestTime = existingPerformance[pose_name + '_best'].best_time || 0;
+//             if (bestTime > currentBestTime) {
+//                 existingPerformance[pose_name + '_best'].best_time = bestTime;
+//                 existingPerformance[pose_name + '_best'].date = new Date();
+//                 await existingPerformance.save()
+
+//                 res.status(200).json({
+//                     success: true,
+//                     message: "Best time updated for today"
+//                 })
+//             } else {
+//                 res.status(200).json({
+//                     success: true,
+//                     message: 'New best time is not greater than the current best time'
+//                 })
+//             }
+//         } else {
+//             let updateObject = {
+//                 clerkUserId: clerkUserId,
+//                 [bestTimeField]: bestTime,
+//                 [dateField]: new Date
+//             }
+//             const updatedPerformance = await Performance.findOneAndUpdate({ clerkUserId: clerkUserId }, updateObject, { new: true, upsert: true })
+//             res.status(200).json({ success: true, message: "New best time created for today" })
+//         }
+//     } catch (err) {
+//         console.error('Error updating performance:', err);
+//         res.status(500).json({
+//             success: false,
+//             message: err.message,
+//         });
+//     }
+// });
+
+// app.get('/api/get-performance/:clerkid', async (req, res) => {
+//     try {
+//         const clearkid = req.params.clerkid
+//         const allPerformance = await Performance.findOne({ clerkUserId: clearkid })
+
+//         if (allPerformance != null) {
+//             res.status(200).json({
+//                 success: true,
+//                 allPerformance: allPerformance
+//             })
+//         }
+//         else {
+//             res.status(403).json({
+//                 success: false,
+//                 message: 'Not found at all'
+//             })
+//         }
+
+//     }
+//     catch (err) {
+//         res.status(500).json({
+//             success: false,
+//             message: err.message
+//         })
+//     }
+// }
+// )
 
 app.post('/api/update-performance', async (req, res) => {
     const { clerkUserId, pose_name, bestTime } = req.body;
@@ -231,17 +314,14 @@ app.post('/api/update-performance', async (req, res) => {
         const bestTimeField = `${pose_name}_best.best_time`;
         const dateField = `${pose_name}_best.date`;
 
-        // const pose1 = `${pose}_best`
-        const today = new Date()
+        const today = new Date();
         const startOfDay = new Date(today.setHours(0, 0, 0, 0));
         const endOfDay = new Date(today.setHours(23, 59, 59, 999));
         const existingPerformance = await Performance.findOne({
             clerkUserId: clerkUserId,
-            // pose: pose,
             [dateField]: {
-                $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of the day
-                $lt: new Date(new Date().setHours(23, 59, 59, 999)) // End of the day
-
+                $gte: startOfDay,
+                $lt: endOfDay
             }
         });
 
@@ -250,61 +330,30 @@ app.post('/api/update-performance', async (req, res) => {
             if (bestTime > currentBestTime) {
                 existingPerformance[pose_name + '_best'].best_time = bestTime;
                 existingPerformance[pose_name + '_best'].date = new Date();
-                await existingPerformance.save()
+                await existingPerformance.save();
 
                 res.status(200).json({
                     success: true,
                     message: "Best time updated for today"
-                })
+                });
             } else {
                 res.status(200).json({
                     success: true,
                     message: 'New best time is not greater than the current best time'
-                })
+                });
             }
-
-            // if (usersWithPose) {
-            //     if (bestTime > existingPerformance.pose1.best_time) {
-            //         existingPerformance.pose1.best_time = bestTime;
-            //         await existingPerformance.save();
-            //         return res.status(200).json({
-            //             success: true,
-            //             message: 'Best time updated for today',
-            //         });
-            //     } else {
-            //         return res.status(200).json({
-            //             success: true,
-            //             message: 'New best time is not greater than the current best time for today',
-            //         });
-            //     }
-            // } else {
-            //     const updatedPerformance = await Performance.findOneAndUpdate({ clerkUserId: clerkUserId }, { $set: { pose: bestTime } }, { new: true })
-            //     return res.status(200).json({ success: true, message: "New pose type added" })
-            // }
         } else {
-            // const newPerformance = new Performance({
-            //     clerkUserId,
-            //     pose1: {
-            //         best_time: bestTime,
-            //         date: new Date()
-            //     }
-            // })
-            // await newPerformance.save();
-            // res.status(200).json({
-            //     success: true,
-            //     message: 'New performance record created for today',
-            // });
-            // const usersWithPose = await Performance.find({ [pose_name +'_best']: { $exists: true } })
-            // if(usersWithPose){
-            //     await Performance.findOneAndUpdate({clerkUserId:clerkUserId},{})
-            // }
             let updateObject = {
                 clerkUserId: clerkUserId,
                 [bestTimeField]: bestTime,
-                [dateField]: new Date
-            }
-            const updatedPerformance = await Performance.findOneAndUpdate({ clerkUserId: clerkUserId }, updateObject, { new: true, upsert: true })
-            res.status(200).json({ success: true, message: "New best time created for today" })
+                [dateField]: new Date()
+            };
+            const updatedPerformance = await Performance.findOneAndUpdate(
+                { clerkUserId: clerkUserId },
+                updateObject,
+                { new: true, upsert: true }
+            );
+            res.status(200).json({ success: true, message: "New best time created for today" });
         }
     } catch (err) {
         console.error('Error updating performance:', err);
@@ -317,30 +366,43 @@ app.post('/api/update-performance', async (req, res) => {
 
 app.get('/api/get-performance/:clerkid', async (req, res) => {
     try {
-        const clearkid = req.params.clerkid
-        const allPerformance = await Performance.findOne({ clerkUserId: clearkid })
+        const clerkid = req.params.clerkid;
+        const allPerformance = await Performance.findOne({ clerkUserId: clerkid });
 
-        if (allPerformance != null) {
+        if (allPerformance) {
+            // Transform the performance data into the expected format
+            const transformedPerformance = {};
+
+            for (const [key, value] of Object.entries(allPerformance.toObject())) {
+                if (key.endsWith('_best') && typeof value === 'object' && value.date && value.best_time !== undefined) {
+                    const poseName = key.replace('_best', '');
+                    if (!transformedPerformance[poseName]) {
+                        transformedPerformance[poseName] = [];
+                    }
+                    transformedPerformance[poseName].push({
+                        date: value.date,
+                        best_time: value.best_time
+                    });
+                }
+            }
+
             res.status(200).json({
                 success: true,
-                allPerformance: allPerformance
-            })
-        }
-        else {
+                performanceData: transformedPerformance
+            });
+        } else {
             res.status(403).json({
                 success: false,
                 message: 'Not found at all'
-            })
+            });
         }
-
-    }
-    catch (err) {
+    } catch (err) {
         res.status(500).json({
             success: false,
             message: err.message
-        })
+        });
     }
-}
-)
+});
+
 
 const port = process.env.PORT || 80;

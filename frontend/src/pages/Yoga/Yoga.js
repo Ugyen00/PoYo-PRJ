@@ -110,7 +110,7 @@ function Yoga() {
         }, 100);
     }
 
-    
+
     const detectPose = async (detector, poseClassifier, countAudio) => {
         const SHIFT_X_VALUE = 48; // Adjust this value to shift the landmarks left
         const SHIFT_Y_VALUE = 46; // Adjust this value to shift the landmarks up
@@ -193,21 +193,21 @@ function Yoga() {
         // Save the best performance time to the backend
         const clerkUserId = user.id; // Get the user's Clerk ID
         console.log(clerkUserId)
-        // axios.post('https://poyo-prj-backend.onrender.com/api/update-best-time', {
-        //     clerkUserId,
-        //     bestPoseTime: bestPerform,
-        //     pose_name: currentPose
-        // })
-        //     .then(response => {
-        //         console.log(response.data.message);
-        //     })
-        //     .catch(error => {
-        //         console.error('Error updating cumulative pose time:', error);
-        //     });
-        axios.post('http://poyo-prj-backend.onrender.com/api/update-performance', {
+        axios.post('https://poyo-prj-backend.onrender.com/api/update-best-time', {
+            clerkUserId,
+            bestPoseTime: bestPerform,
+            pose_name: currentPose
+        })
+            .then(response => {
+                console.log(response.data.message);
+            })
+            .catch(error => {
+                console.error('Error updating cumulative pose time:', error);
+            });
+        axios.post('https://poyo-prj-backend.onrender.com/api/update-performance', {
             clerkUserId,
             bestTime: bestPerform,
-            pose: currentPose
+            pose_name: currentPose
         }).then(response => {
             console.log(response.data.message);
         })
