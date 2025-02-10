@@ -67,10 +67,9 @@ export default function NavBar() {
                         </Link>
                         <Link to='/about' onClick={toggleNav}>
                             <button className="py-2 px-2 mb-2 text-base text-black text-left bg-transparent outline-none cursor-pointer">
-                                About Us
+                                AI Planner
                             </button>
                         </Link>
-
                         <SignedIn>
                             <Link to='/profile' onClick={toggleNav}>
                                 <button className="py-2 px-2 mb-2 text-base text-black text-left bg-transparent outline-none cursor-pointer">
@@ -102,7 +101,7 @@ export default function NavBar() {
                             <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Live Session</button>
                         </Link>
                         <Link to='/about'>
-                            <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">About Us</button>
+                            <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">AI Planner</button>
                         </Link>
                         <Link to='/profile'>
                             <button className="py-2 px-1 m-1 text-black text-sm cursor-pointer">Profile</button>

@@ -5,7 +5,7 @@ const Footer = () => {
                 <div className="container mx-auto flex flex-wrap justify-around">
                     <div className="flex flex-col items-left text-white text-[12px] mb-8 md:mb-0 md:w-1/4">
                         <p className="text-[32px] py-3">Quick Links</p>
-                        <a href="/about" className="py-1">About Us</a>
+                        <a href="/about" className="py-1">AI Planner</a>
                         <a href="/yogaclass" className="py-1">Yoga Class</a>
                         <a href="/yoga" className="py-1">Live Session</a>
                     </div>
